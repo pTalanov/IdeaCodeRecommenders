@@ -1,24 +1,29 @@
 <idea-plugin version="2">
-  <id>ru.spbau.recommenders</id>
-  <name>Recommenders prototype</name>
-  <version>0.01</version>
+    <id>ru.spbau.recommenders</id>
+    <name>Recommenders prototype</name>
+    <version>0.01</version>
 
-  <description>An attempt to build something similar to Eclipse Code Recommenders</description>
+    <description>An attempt to build something similar to Eclipse Code Recommenders</description>
 
-  <idea-version since-build="107.105"/>
+    <idea-version since-build="107.105"/>
 
-  <!--TODO: figure out the right dependency-->
-  <depends>com.intellij.modules.java</depends>
 
-  <application-components>
-  </application-components>
+    <application-components>
+    </application-components>
 
-  <project-components>
-  </project-components>
+    <project-components>
+        <component>
+            <implementation-class>ru.spbau.recommenders.plugin.MethodStatisticsProjectComponent</implementation-class>
+        </component>
+    </project-components>
 
-  <actions>
-  </actions>
+    <actions>
+    </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <completion.contributor language="JAVA"
+                                implementationClass="ru.spbau.recommenders.plugin.MostPopularMethodContributor"
+                                id="MostPopularMethodContributor" order="first"/>
+
+    </extensions>
 </idea-plugin>
