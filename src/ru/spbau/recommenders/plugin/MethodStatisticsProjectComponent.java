@@ -13,13 +13,12 @@ import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-
-import static ru.spbau.recommenders.plugin.DeclaredVariables.collect;
 
 /**
  * @author Pavel Talanov
@@ -65,17 +64,9 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
         StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
+                CallStatisticsCollector callStatisticsCollector = new CallStatisticsCollector(methodCallData);
                 for (PsiFile psiFile : getAllPsiFiles()) {
-                    psiFile.accept(new JavaRecursiveElementVisitor() {
-                        @Override
-                        public void visitMethod(PsiMethod method) {
-                            //TODO: need super call?
-                            super.visitMethod(method);
-                            if (method.getBody() != null) {
-                                processMethod(method);
-                            }
-                        }
-                    });
+                    callStatisticsCollector.collectStatistics(psiFile);
                 }
                 methodCallData.printStatistics();
             }
@@ -86,32 +77,6 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     public void projectClosed() {
         //do nothing
     }
-
-    private void processMethod(@NotNull PsiMethod method) {
-        final DeclaredVariables declaredVariables = collect(method);
-        PsiCodeBlock body = method.getBody();
-        assert body != null;
-        body.accept(new JavaRecursiveElementVisitor() {
-            @Override
-            public void visitMethodCallExpression(PsiMethodCallExpression expression) {
-                //TODO: unneeded super call?
-                super.visitMethodCallExpression(expression);
-                PsiReferenceExpression methodExpression = expression.getMethodExpression();
-                PsiExpression qualifierExpression = methodExpression.getQualifierExpression();
-                if (qualifierExpression instanceof PsiReferenceExpression) {
-                    String referencedName = ((PsiReferenceExpression) qualifierExpression).getReferenceName();
-                    String methodName = methodExpression.getReferenceName();
-                    if (referencedName != null && methodName != null) {
-                        String type = declaredVariables.getType(referencedName);
-                        if (type != null) {
-                            methodCallData.registerCall(type, methodName);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
 
     @NotNull
     private Set<PsiFile> getAllPsiFiles() {
