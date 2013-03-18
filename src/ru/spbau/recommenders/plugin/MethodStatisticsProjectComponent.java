@@ -17,9 +17,9 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+
+import static ru.spbau.recommenders.plugin.DeclaredVariables.collect;
 
 /**
  * @author Pavel Talanov
@@ -88,9 +88,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     }
 
     private void processMethod(@NotNull PsiMethod method) {
-        final DeclaredVariables declaredVariables = new DeclaredVariables();
-        addParameters(method, declaredVariables);
-        addLocalVariableDeclarations(method, declaredVariables);
+        final DeclaredVariables declaredVariables = collect(method);
         PsiCodeBlock body = method.getBody();
         assert body != null;
         body.accept(new JavaRecursiveElementVisitor() {
@@ -114,52 +112,6 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
         });
     }
 
-    private void addLocalVariableDeclarations(@NotNull PsiMethod method,
-                                              @NotNull final DeclaredVariables declaredVariables) {
-        PsiCodeBlock body = method.getBody();
-        assert body != null;
-        body.accept(new JavaRecursiveElementVisitor() {
-            @Override
-            public void visitDeclarationStatement(PsiDeclarationStatement statement) {
-                PsiElement[] declaredElements = statement.getDeclaredElements();
-                for (PsiElement declaredElement : declaredElements) {
-                    if (declaredElement instanceof PsiLocalVariable) {
-                        String name = ((PsiLocalVariable) declaredElement).getName();
-                        String typeName = ((PsiLocalVariable) declaredElement).getType().getCanonicalText();
-                        if (name != null) {
-                            declaredVariables.registerDeclaration(name, typeName);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    private void addParameters(@NotNull PsiMethod method, @NotNull DeclaredVariables declaredVariables) {
-        PsiParameterList parameterList = method.getParameterList();
-        for (PsiParameter psiParameter : parameterList.getParameters()) {
-            String name = psiParameter.getName();
-            String typeName = psiParameter.getType().getCanonicalText();
-            if (name != null) {
-                declaredVariables.registerDeclaration(name, typeName);
-            }
-        }
-    }
-
-
-    private class DeclaredVariables {
-        @NotNull
-        private final Map<String, String> nameToType = new HashMap<String, String>();
-
-        void registerDeclaration(@NotNull String name, @NotNull String typeName) {
-            nameToType.put(name, typeName);
-        }
-
-        @Nullable
-        String getType(@NotNull String name) {
-            return nameToType.get(name);
-        }
-    }
 
     @NotNull
     private Set<PsiFile> getAllPsiFiles() {
