@@ -4,6 +4,7 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,5 +62,14 @@ public final class DeclaredVariables {
     @Nullable
     public String getType(@NotNull String name) {
         return nameToType.get(name);
+    }
+
+    public boolean isDeclared(@NotNull String name) {
+        return nameToType.containsKey(name);
+    }
+
+    @NotNull
+    public Collection<String> getDeclaredVariables() {
+        return nameToType.keySet();
     }
 }
