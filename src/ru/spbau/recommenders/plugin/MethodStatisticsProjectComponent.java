@@ -17,7 +17,9 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -52,60 +54,6 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     @Override
     public void disposeComponent() {
         //do nothing
-    }
-
-    private class MethodCallData {
-
-        @NotNull
-        private final Map<String, Map<String, Integer>> typeNameToMethodCallCount = new HashMap<String, Map<String, Integer>>();
-
-        void registerCall(@NotNull String typeName, @NotNull String methodName) {
-            Map<String, Integer> methodCallCount = getMethodCallCount(typeName);
-            Integer count = methodCallCount.get(methodName);
-            if (count == null) {
-                methodCallCount.put(methodName, 1);
-            } else {
-                methodCallCount.put(methodName, count + 1);
-            }
-        }
-
-        @NotNull
-        private Map<String, Integer> getMethodCallCount(@NotNull String typeName) {
-            Map<String, Integer> methodCallCount = typeNameToMethodCallCount.get(typeName);
-            if (methodCallCount == null) {
-                methodCallCount = new HashMap<String, Integer>();
-                typeNameToMethodCallCount.put(typeName, methodCallCount);
-            }
-            return methodCallCount;
-        }
-
-        @Nullable
-        private String getMostCalledMethod(@NotNull String typeName) {
-            Map<String, Integer> methodCallCount = typeNameToMethodCallCount.get(typeName);
-            if (methodCallCount == null) {
-                return null;
-            }
-            assert !methodCallCount.isEmpty();
-            Map.Entry<String, Integer> mostCalledMethod = Collections.max(methodCallCount.entrySet(), new Comparator<Map.Entry<String, Integer>>() {
-                @Override
-                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                    return o1.getValue() - o2.getValue();
-                }
-            });
-            return mostCalledMethod.getKey();
-        }
-
-        private void printStatistics() {
-            for (String type : typeNameToMethodCallCount.keySet()) {
-                System.out.println("For type [" + type + "]:\n");
-                for (Map.Entry<String, Integer> methodWithCount : typeNameToMethodCallCount.get(type).entrySet()) {
-                    System.out.println("\t" + methodWithCount.getKey() + ": " + methodWithCount.getValue());
-                }
-                System.out.println("----------------------------\n");
-            }
-        }
-
-
     }
 
     @NotNull
@@ -167,12 +115,13 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     }
 
     private void addLocalVariableDeclarations(@NotNull PsiMethod method,
-                                              @NotNull DeclaredVariables declaredVariables) {
+                                              @NotNull final DeclaredVariables declaredVariables) {
         PsiCodeBlock body = method.getBody();
         assert body != null;
-        for (PsiStatement statement : body.getStatements()) {
-            if (statement instanceof PsiDeclarationStatement) {
-                PsiElement[] declaredElements = ((PsiDeclarationStatement) statement).getDeclaredElements();
+        body.accept(new JavaRecursiveElementVisitor() {
+            @Override
+            public void visitDeclarationStatement(PsiDeclarationStatement statement) {
+                PsiElement[] declaredElements = statement.getDeclaredElements();
                 for (PsiElement declaredElement : declaredElements) {
                     if (declaredElement instanceof PsiLocalVariable) {
                         String name = ((PsiLocalVariable) declaredElement).getName();
@@ -183,7 +132,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
                     }
                 }
             }
-        }
+        });
     }
 
     private void addParameters(@NotNull PsiMethod method, @NotNull DeclaredVariables declaredVariables) {
