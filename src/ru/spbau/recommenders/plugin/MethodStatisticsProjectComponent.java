@@ -18,6 +18,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -32,7 +33,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
 
     @Nullable
     public String getMostUsedMethodName(@NotNull String typeName) {
-        return methodCallData.getMostCalledMethod(typeName);
+        return methodCallData.getMostCalledMethod(typeName, Collections.<String>emptyList());
     }
 
     @NotNull
@@ -65,7 +66,9 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
             @Override
             public void run() {
                 CallStatisticsCollector callStatisticsCollector = new CallStatisticsCollector(methodCallData);
-                for (PsiFile psiFile : getAllPsiFiles()) {
+                Set<PsiFile> allPsiFiles = getAllPsiFiles();
+                System.out.println(allPsiFiles);
+                for (PsiFile psiFile : allPsiFiles) {
                     callStatisticsCollector.collectStatistics(psiFile);
                 }
                 methodCallData.printStatistics();

@@ -3,64 +3,46 @@ package ru.spbau.recommenders.plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Pavel Talanov
  */
-public class MethodCallData {
+public final class MethodCallData {
 
     @NotNull
-    private final Map<String, Map<String, Integer>> typeNameToMethodCallCount = new HashMap<String, Map<String, Integer>>();
+    private final Map<String, CallSequenceStatistics> typeNameToStatistics = new HashMap<String, CallSequenceStatistics>();
 
-    public void registerCall(@NotNull String typeName, @NotNull String methodName) {
-        Map<String, Integer> methodCallCount = getMethodCallCount(typeName);
-        Integer count = methodCallCount.get(methodName);
-        if (count == null) {
-            methodCallCount.put(methodName, 1);
-        } else {
-            methodCallCount.put(methodName, count + 1);
-        }
+    public void registerCallSequence(@NotNull String typeName, @NotNull List<String> callSequence) {
+        getStatistics(typeName).registerSequence(callSequence);
     }
 
     @NotNull
-    private Map<String, Integer> getMethodCallCount(@NotNull String typeName) {
-        Map<String, Integer> methodCallCount = typeNameToMethodCallCount.get(typeName);
-        if (methodCallCount == null) {
-            methodCallCount = new HashMap<String, Integer>();
-            typeNameToMethodCallCount.put(typeName, methodCallCount);
+    private CallSequenceStatistics getStatistics(@NotNull String typeName) {
+        CallSequenceStatistics callSequenceStatistics = typeNameToStatistics.get(typeName);
+        if (callSequenceStatistics == null) {
+            callSequenceStatistics = new CallSequenceStatistics();
+            typeNameToStatistics.put(typeName, callSequenceStatistics);
         }
-        return methodCallCount;
+        return callSequenceStatistics;
     }
 
     @Nullable
-    public String getMostCalledMethod(@NotNull String typeName) {
-        Map<String, Integer> methodCallCount = typeNameToMethodCallCount.get(typeName);
-        if (methodCallCount == null) {
+    public String getMostCalledMethod(@NotNull String typeName, @NotNull List<String> callSequence) {
+        CallSequenceStatistics callSequenceStatistics = typeNameToStatistics.get(typeName);
+        if (callSequenceStatistics == null) {
             return null;
         }
-        assert !methodCallCount.isEmpty();
-        Map.Entry<String, Integer> mostCalledMethod = Collections.max(methodCallCount.entrySet(), new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o1.getValue() - o2.getValue();
-            }
-        });
-        return mostCalledMethod.getKey();
+        return callSequenceStatistics.getSuggestion(callSequence);
     }
 
     public void printStatistics() {
-        for (String type : typeNameToMethodCallCount.keySet()) {
+        for (String type : typeNameToStatistics.keySet()) {
             System.out.println("For type [" + type + "]:\n");
-            for (Map.Entry<String, Integer> methodWithCount : typeNameToMethodCallCount.get(type).entrySet()) {
-                System.out.println("\t" + methodWithCount.getKey() + ": " + methodWithCount.getValue());
-            }
+            System.out.println(typeNameToStatistics.get(type));
             System.out.println("----------------------------\n");
         }
     }
-
-
 }

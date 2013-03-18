@@ -51,8 +51,9 @@ public final class CallStatisticsCollector {
         for (String variableName : declaredVariables.getDeclaredVariables()) {
             String typeName = declaredVariables.getType(variableName);
             assert typeName != null;
-            for (String methodName : methodSequenceData.getSequence(variableName)) {
-                methodCallData.registerCall(typeName, methodName);
+            List<String> sequence = methodSequenceData.getSequence(variableName);
+            if (!sequence.isEmpty()) {
+                methodCallData.registerCallSequence(typeName, sequence);
             }
         }
     }
