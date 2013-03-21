@@ -36,7 +36,26 @@ public final class CallStatisticsCollector {
     }
 
     private void processMethod(@NotNull PsiMethod method) {
-        final DeclaredVariables declaredVariables = collect(method);
+        DeclaredVariables declaredVariables = collect(method);
+        MethodSequenceData methodSequenceData = collectMethodSequenceData(method, declaredVariables);
+        recordMethodCallData(declaredVariables, methodSequenceData);
+    }
+
+    private void recordMethodCallData(@NotNull DeclaredVariables declaredVariables,
+                                      @NotNull MethodSequenceData methodSequenceData) {
+        for (String variableName : declaredVariables.getDeclaredVariables()) {
+            String typeName = declaredVariables.getType(variableName);
+            assert typeName != null;
+            List<String> sequence = methodSequenceData.getSequence(variableName);
+            for (int i = 1; i <= sequence.size(); ++i) {
+                methodCallData.registerCallSequence(typeName, sequence.subList(0, i));
+            }
+        }
+    }
+
+    @NotNull
+    private MethodSequenceData collectMethodSequenceData(@NotNull PsiMethod method,
+                                                         @NotNull final DeclaredVariables declaredVariables) {
         final MethodSequenceData methodSequenceData = new MethodSequenceData();
         PsiCodeBlock body = method.getBody();
         assert body != null;
@@ -47,15 +66,7 @@ public final class CallStatisticsCollector {
                 methodSequenceData.processMethodCall(expression, declaredVariables);
             }
         });
-
-        for (String variableName : declaredVariables.getDeclaredVariables()) {
-            String typeName = declaredVariables.getType(variableName);
-            assert typeName != null;
-            List<String> sequence = methodSequenceData.getSequence(variableName);
-            if (!sequence.isEmpty()) {
-                methodCallData.registerCallSequence(typeName, sequence);
-            }
-        }
+        return methodSequenceData;
     }
 
     private class MethodSequenceData {
