@@ -18,7 +18,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,8 +32,8 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     }
 
     @Nullable
-    public String getMostUsedMethodName(@NotNull String typeName) {
-        return methodCallData.getMostCalledMethod(typeName, Collections.<String>emptyList());
+    public String getMostUsedMethodName(@NotNull String typeName, @NotNull List<String> callSequence) {
+        return methodCallData.getMostCalledMethod(typeName, callSequence);
     }
 
     @NotNull
