@@ -52,17 +52,13 @@ public final class MethodSequenceData {
 
     private void processMethodCall(@NotNull PsiMethodCallExpression expression,
                                    @NotNull DeclaredVariables declaredVariables) {
-        PsiReferenceExpression methodExpression = expression.getMethodExpression();
-        PsiExpression qualifierExpression = methodExpression.getQualifierExpression();
-        if (qualifierExpression instanceof PsiReferenceExpression) {
-            String referencedName = ((PsiReferenceExpression) qualifierExpression).getReferenceName();
-            String methodName = methodExpression.getReferenceName();
-            if (referencedName != null && methodName != null) {
-                if (declaredVariables.isDeclared(referencedName)) {
-                    registerCall(referencedName, methodName);
-                }
-            }
+        String referencedName = PsiUtils.getReferencedName(expression);
+        String methodName = PsiUtils.getMethodName(expression);
+        if (referencedName == null || methodName == null) {
+            return;
+        }
+        if (declaredVariables.isDeclared(referencedName)) {
+            registerCall(referencedName, methodName);
         }
     }
-
 }
