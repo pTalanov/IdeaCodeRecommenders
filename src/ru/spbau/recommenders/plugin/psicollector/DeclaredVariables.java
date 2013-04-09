@@ -1,4 +1,4 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.psicollector;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
