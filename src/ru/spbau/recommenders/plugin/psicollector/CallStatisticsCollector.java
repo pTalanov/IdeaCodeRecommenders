@@ -1,13 +1,14 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.psicollector;
 
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.recommenders.plugin.storage.inmemory.MethodCallData;
 
 import java.util.List;
 
-import static ru.spbau.recommenders.plugin.DeclaredVariables.collect;
+import static ru.spbau.recommenders.plugin.psicollector.DeclaredVariables.collect;
 
 /**
  * @author Pavel Talanov

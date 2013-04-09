@@ -1,4 +1,4 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.contributor;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -6,11 +6,12 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.recommenders.plugin.MethodStatisticsProjectComponent;
 
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static ru.spbau.recommenders.plugin.PsiUtils.collectMethodCallsBeforeElementForQualifier;
+import static ru.spbau.recommenders.plugin.utils.PsiUtils.collectMethodCallsBeforeElementForQualifier;
 
 /**
  * @author Osipov Stanislav

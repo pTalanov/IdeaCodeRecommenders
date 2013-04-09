@@ -22,7 +22,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <completion.contributor language="JAVA"
-                                implementationClass="ru.spbau.recommenders.plugin.MostPopularMethodContributor"
+                                implementationClass="ru.spbau.recommenders.plugin.contributor.MostPopularMethodContributor"
                                 id="MostPopularMethodContributor" order="first"/>
 
         <compileServer.plugin classpath="jps/recommenders-jps-plugin.jar"/>

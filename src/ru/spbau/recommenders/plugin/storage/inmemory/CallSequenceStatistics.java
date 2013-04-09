@@ -1,7 +1,9 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.storage.inmemory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.recommenders.plugin.data.CallSequence;
+import ru.spbau.recommenders.plugin.data.Suggestions;
 
 import java.util.HashMap;
 import java.util.List;
