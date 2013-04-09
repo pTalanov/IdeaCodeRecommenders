@@ -1,4 +1,4 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.data;
 
 import org.jetbrains.annotations.NotNull;
 

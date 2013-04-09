@@ -1,4 +1,4 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.storage.inmemory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

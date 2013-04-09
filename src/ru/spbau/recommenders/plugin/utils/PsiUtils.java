@@ -1,4 +1,4 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.utils;
 
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;

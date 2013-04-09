@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.jps.incremental.recommenders.RecommendersBuilder;
 import ru.spbau.jps.incremental.recommenders.StringSerializer;
+import ru.spbau.recommenders.plugin.psicollector.CallStatisticsCollector;
+import ru.spbau.recommenders.plugin.storage.inmemory.MethodCallData;
 
 import java.io.IOException;
 import java.util.HashMap;

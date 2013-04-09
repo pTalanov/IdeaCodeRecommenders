@@ -1,10 +1,11 @@
-package ru.spbau.recommenders.plugin;
+package ru.spbau.recommenders.plugin.psicollector;
 
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.recommenders.plugin.utils.PsiUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
