@@ -3,10 +3,7 @@ package ru.spbau.recommenders.plugin.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
@@ -43,5 +40,17 @@ public final class Suggestions {
     @Override
     public String toString() {
         return methodNameToUsageCount.toString();
+    }
+
+    @NotNull
+    public Collection<Map.Entry<String, Integer>> toCollection() {
+        return methodNameToUsageCount.entrySet();
+    }
+
+    @NotNull
+    public static Suggestions fromMap(@NotNull Map<String, Integer> data) {
+        Suggestions suggestions = new Suggestions();
+        suggestions.methodNameToUsageCount.putAll(data);
+        return suggestions;
     }
 }

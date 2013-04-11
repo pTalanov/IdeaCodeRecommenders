@@ -18,9 +18,8 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.recommenders.plugin.data.Suggestions;
+import ru.spbau.recommenders.plugin.persistent.PersistentStorage;
 import ru.spbau.recommenders.plugin.psicollector.CallStatisticsCollector;
-import ru.spbau.recommenders.plugin.storage.MethodStatisticsStorage;
-import ru.spbau.recommenders.plugin.storage.inmemory.MethodCallData;
 
 import java.util.List;
 import java.util.Set;
@@ -41,7 +40,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     }
 
     @NotNull
-    private final MethodStatisticsStorage storage = new MethodCallData();
+    private PersistentStorage storage;
 
     @NotNull
     private final Project project;
@@ -52,12 +51,12 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
 
     @Override
     public void initComponent() {
-        //do nothing
+        storage = new PersistentStorage(project);
     }
 
     @Override
     public void disposeComponent() {
-        //do nothing
+        storage.close();
     }
 
     @NotNull
