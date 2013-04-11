@@ -21,9 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import ru.spbau.recommenders.plugin.data.Suggestions;
 import ru.spbau.jps.incremental.recommenders.RecommendersBuilder;
 import ru.spbau.jps.incremental.recommenders.StringSerializer;
+import ru.spbau.recommenders.plugin.persistent.PersistentStorage;
 import ru.spbau.recommenders.plugin.psicollector.CallStatisticsCollector;
-import ru.spbau.recommenders.plugin.storage.MethodStatisticsStorage;
-import ru.spbau.recommenders.plugin.storage.inmemory.MethodCallData;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     }
 
     @NotNull
-    private final MethodStatisticsStorage storage = new MethodCallData();
+    private PersistentStorage storage;
     
     @NotNull
     private StringSerializer<HashMap<String, Map<List<String>, Integer>>> deserializer
@@ -63,6 +62,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
 
     @Override
     public void initComponent() {
+        storage = new PersistentStorage(project);
         StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
             @Override
             public void run() {
@@ -87,7 +87,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
 
     @Override
     public void disposeComponent() {
-        //do nothing
+        storage.close();
     }
 
     @NotNull
