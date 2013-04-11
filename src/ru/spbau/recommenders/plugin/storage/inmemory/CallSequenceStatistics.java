@@ -31,20 +31,17 @@ public final class CallSequenceStatistics {
         getOrCreateSuggestions(sequence).registerUsage(methodName);
     }
 
-    public void registerSequence(@NotNull List<String> callSequence) {
-        assert !callSequence.isEmpty();
-        String methodToSuggest = callSequence.get(callSequence.size() - 1);
-        List<String> prefix = callSequence.subList(0, callSequence.size() - 1);
-        registerSequence(new CallSequence(prefix), methodToSuggest);
+    public void registerSequence(@NotNull List<String> callSequence, @NotNull String methodToSuggest) {
+        registerSequence(new CallSequence(callSequence), methodToSuggest);
     }
 
     @Nullable
-    public String getSuggestion(@NotNull List<String> callSequence) {
+    public Suggestions getSuggestion(@NotNull List<String> callSequence) {
         Suggestions suggestions = sequenceToSuggestions.get(new CallSequence(callSequence));
         if (suggestions == null) {
             return null;
         }
-        return suggestions.getMostUsedSuggestion();
+        return suggestions;
     }
 
     @Override

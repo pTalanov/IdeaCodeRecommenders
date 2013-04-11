@@ -4,11 +4,12 @@ import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.recommenders.plugin.storage.inmemory.MethodCallData;
+import ru.spbau.recommenders.plugin.storage.MethodStatisticsStorage;
 
 import java.util.List;
 
 import static ru.spbau.recommenders.plugin.psicollector.DeclaredVariables.collect;
+import static ru.spbau.recommenders.plugin.storage.StorageUtils.saveCallSequenceToStorage;
 
 /**
  * @author Pavel Talanov
@@ -16,10 +17,10 @@ import static ru.spbau.recommenders.plugin.psicollector.DeclaredVariables.collec
 public final class CallStatisticsCollector {
 
     @NotNull
-    private final MethodCallData methodCallData;
+    private final MethodStatisticsStorage methodStatisticsStorage;
 
-    public CallStatisticsCollector(@NotNull MethodCallData methodCallData) {
-        this.methodCallData = methodCallData;
+    public CallStatisticsCollector(@NotNull MethodStatisticsStorage methodStatisticsStorage) {
+        this.methodStatisticsStorage = methodStatisticsStorage;
     }
 
     public void collectStatistics(@NotNull PsiFile psiFile) {
@@ -47,10 +48,7 @@ public final class CallStatisticsCollector {
             String typeName = declaredVariables.getType(variableName);
             assert typeName != null;
             List<String> sequence = methodSequenceData.getSequence(variableName);
-            for (int i = 1; i <= sequence.size(); ++i) {
-                methodCallData.registerCallSequence(typeName, sequence.subList(0, i));
-            }
+            saveCallSequenceToStorage(typeName, sequence, methodStatisticsStorage);
         }
     }
-
 }
