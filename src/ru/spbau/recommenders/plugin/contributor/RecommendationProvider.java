@@ -7,6 +7,7 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.recommenders.plugin.MethodStatisticsProjectComponent;
+import ru.spbau.recommenders.plugin.data.Suggestions;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import static ru.spbau.recommenders.plugin.utils.PsiUtils.collectMethodCallsBefo
 public class RecommendationProvider {
 
     @Nullable
-    public static Recommendation getRecommendation(CompletionParameters parameters) {
+    public static Recommendation getRecommendation(@NotNull CompletionParameters parameters) {
         PsiElement position = parameters.getPosition();
         if (!psiElement(PsiIdentifier.class).withText(CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED)
                 .withParent(PsiReferenceExpression.class).accepts(position)) {
@@ -38,11 +39,19 @@ public class RecommendationProvider {
     }
 
     @Nullable
-    private static Recommendation calculateRecommendation(PsiElement position, PsiReferenceExpression qualifierExpression, PsiType type) {
+    private static Recommendation calculateRecommendation(@NotNull PsiElement position,
+                                                          @NotNull PsiReferenceExpression qualifierExpression,
+                                                          @NotNull PsiType type
+    ) {
         String typeName = type.getCanonicalText();
         List<String> methodsCalledBeforePosition
                 = collectMethodCallsBeforeElementForQualifier(position, qualifierExpression);
-        final String mostUsedMethodName = MethodStatisticsProjectComponent.getInstance(position.getProject()).getMostUsedMethodName(typeName, methodsCalledBeforePosition);
+        Suggestions suggestions = MethodStatisticsProjectComponent.getInstance(position.getProject())
+                .getRecommendation(typeName, methodsCalledBeforePosition);
+        if (suggestions == null) {
+            return null;
+        }
+        final String mostUsedMethodName = suggestions.getMostUsedSuggestion();
         return new Recommendation() {
             @Override
             public double getPriority(@NotNull LookupElement lookupElement) {
