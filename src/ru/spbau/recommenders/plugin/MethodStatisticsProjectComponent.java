@@ -18,9 +18,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.recommenders.plugin.data.Suggestions;
 import ru.spbau.jps.incremental.recommenders.RecommendersBuilder;
 import ru.spbau.jps.incremental.recommenders.StringSerializer;
 import ru.spbau.recommenders.plugin.psicollector.CallStatisticsCollector;
+import ru.spbau.recommenders.plugin.storage.MethodStatisticsStorage;
 import ru.spbau.recommenders.plugin.storage.inmemory.MethodCallData;
 
 import java.io.IOException;
@@ -40,16 +42,17 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     }
 
     @Nullable
-    public String getMostUsedMethodName(@NotNull String typeName, @NotNull List<String> callSequence) {
-        return methodCallData.getMostCalledMethod(typeName, callSequence);
+    public Suggestions getRecommendation(@NotNull String typeName, @NotNull List<String> callSequence) {
+        return storage.getSuggestions(typeName, callSequence);
     }
 
+    @NotNull
+    private final MethodStatisticsStorage storage = new MethodCallData();
+    
     @NotNull
     private StringSerializer<HashMap<String, Map<List<String>, Integer>>> deserializer
             = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
 
-    @NotNull
-    private final MethodCallData methodCallData = new MethodCallData();
 
     @NotNull
     private final Project project;
@@ -96,14 +99,13 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
         StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
-
-                CallStatisticsCollector callStatisticsCollector = new CallStatisticsCollector(methodCallData);
+                CallStatisticsCollector callStatisticsCollector = new CallStatisticsCollector(storage);
                 Set<PsiFile> allPsiFiles = getAllPsiFiles();
                 System.out.println(allPsiFiles);
                 for (PsiFile psiFile : allPsiFiles) {
                     callStatisticsCollector.collectStatistics(psiFile);
                 }
-                methodCallData.printStatistics();
+                System.out.println(storage.toString());
             }
         });
     }

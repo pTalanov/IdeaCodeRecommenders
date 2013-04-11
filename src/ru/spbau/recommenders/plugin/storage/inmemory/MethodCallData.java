@@ -2,6 +2,8 @@ package ru.spbau.recommenders.plugin.storage.inmemory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.recommenders.plugin.data.Suggestions;
+import ru.spbau.recommenders.plugin.storage.MethodStatisticsStorage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,13 +12,16 @@ import java.util.Map;
 /**
  * @author Pavel Talanov
  */
-public final class MethodCallData {
+public final class MethodCallData implements MethodStatisticsStorage {
 
     @NotNull
     private final Map<String, CallSequenceStatistics> typeNameToStatistics = new HashMap<String, CallSequenceStatistics>();
 
-    public void registerCallSequence(@NotNull String typeName, @NotNull List<String> callSequence) {
-        getStatistics(typeName).registerSequence(callSequence);
+    @Override
+    public void registerCallSequence(@NotNull String typeName,
+                                     @NotNull List<String> callSequence,
+                                     @NotNull String methodToSuggest) {
+        getStatistics(typeName).registerSequence(callSequence, methodToSuggest);
     }
 
     @NotNull
@@ -30,7 +35,8 @@ public final class MethodCallData {
     }
 
     @Nullable
-    public String getMostCalledMethod(@NotNull String typeName, @NotNull List<String> callSequence) {
+    @Override
+    public Suggestions getSuggestions(@NotNull String typeName, @NotNull List<String> callSequence) {
         CallSequenceStatistics callSequenceStatistics = typeNameToStatistics.get(typeName);
         if (callSequenceStatistics == null) {
             return null;
@@ -38,11 +44,13 @@ public final class MethodCallData {
         return callSequenceStatistics.getSuggestion(callSequence);
     }
 
-    public void printStatistics() {
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
         for (String type : typeNameToStatistics.keySet()) {
-            System.out.println("For type [" + type + "]:\n");
-            System.out.println(typeNameToStatistics.get(type));
-            System.out.println("----------------------------\n");
+            sb.append("For type [").append(type).append("]:\n");
+            sb.append(typeNameToStatistics.get(type)).append("\n\n");
         }
+        return sb.toString();
     }
 }
