@@ -48,24 +48,22 @@ public final class Externalizers {
         @Override
         public void save(DataOutput out, Suggestions value) throws IOException {
             Collection<Map.Entry<String, Integer>> entries = value.toCollection();
-            out.write(entries.size());
-//            for (Map.Entry<String, Integer> entry : entries) {
-//                STRING_EXTERNALIZER.save(out, entry.getKey());
-//                out.write(entry.getValue());
-//            }
+            out.writeInt(entries.size());
+            for (Map.Entry<String, Integer> entry : entries) {
+                STRING_EXTERNALIZER.save(out, entry.getKey());
+                out.writeInt(entry.getValue());
+            }
         }
 
         @Override
         public Suggestions read(DataInput in) throws IOException {
             Map<String, Integer> data = new HashMap<String, Integer>();
             int size = in.readInt();
-            assert size >= 0;
-            assert size <= 100;
-//            while (--size >= 0) {
-//                String key = STRING_EXTERNALIZER.read(in);
-//                int value = in.readInt();
-//                data.put(key, value);
-//            }
+            while (--size >= 0) {
+                String key = STRING_EXTERNALIZER.read(in);
+                int value = in.readInt();
+                data.put(key, value);
+            }
             return Suggestions.fromMap(data);
         }
     };
@@ -80,7 +78,7 @@ public final class Externalizers {
 
         @Override
         public void save(DataOutput out, List<T> list) throws IOException {
-            out.write(list.size());
+            out.writeInt(list.size());
             for (T value : list) {
                 valueExternalizer.save(out, value);
             }
