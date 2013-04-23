@@ -48,7 +48,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
 
     @Override
     public void initComponent() {
-        //do nothing
+//        JavaBuilder.registerClassPostProcessor(new RecommendersClassPostProcessor());
     }
 
     @Override
@@ -65,6 +65,8 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
         StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
+
+//                JavaBuilder.registerClassPostProcessor(new RecommendersClassPostProcessor());
                 CallStatisticsCollector callStatisticsCollector = new CallStatisticsCollector(methodCallData);
                 Set<PsiFile> allPsiFiles = getAllPsiFiles();
                 System.out.println(allPsiFiles);
