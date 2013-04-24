@@ -26,8 +26,4 @@ public class RecommendersClassVisitor extends ClassVisitor {
         return new RecommendersMethodVisitor(className, Opcodes.ACC_PUBLIC, n, desc, sequences);
     }
 
-    @Override
-    public void visitEnd() {
-        super.visitEnd();    //To change body of overridden methods use File | Settings | File Templates.
-    }
 }
