@@ -7,6 +7,7 @@ import org.junit.Test;
 import ru.spbau.recommenders.plugin.asm.RecommendersClassVisitor;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,9 @@ public class RecommendersClassVisitorTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Runtime.getRuntime().exec("javac src/ru/spbau/recommenders/plugin/asm/tests/TestClass.java");
+        Runtime.getRuntime().exec("javac -g src/ru/spbau/recommenders/plugin/asm/tests/TestClass.java");
+        File f = new File("src/ru/spbau/recommenders/plugin/asm/tests/TestClass.class");
+        while(!f.exists()) {};
         reader = new ClassReader(new BufferedInputStream(new FileInputStream("src/ru/spbau/recommenders/plugin/asm/tests/TestClass.class")));
     }
 
@@ -33,5 +36,6 @@ public class RecommendersClassVisitorTest {
         Map<String, List<List<String>>> sequences = new HashMap<String, List<List<String>>>();
         reader.accept(new RecommendersClassVisitor("TestClass", sequences), Opcodes.ASM4);
         assertTrue(true);
+
     }
 }
