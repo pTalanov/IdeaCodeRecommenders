@@ -25,5 +25,9 @@
                                 implementationClass="ru.spbau.recommenders.plugin.MostPopularMethodContributor"
                                 id="MostPopularMethodContributor" order="first"/>
 
+        <!--<weigher implementationClass="ru.spbau.recommenders.plugin.PopularWeigher"-->
+        <!--key="completion"-->
+        <!--order="first"/>-->
+
     </extensions>
 </idea-plugin>

@@ -1,4 +1,7 @@
-package ru.spbau.recommenders.plugin.asm.tests;
+package tests;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Osipov Stanislav
@@ -11,6 +14,17 @@ public class TestClass {
     public TestClass() {
         this.myStringField = "Default Test String";
         myIntField = 666;
+    }
+
+
+    public String twoLocalVariables() {
+        String var1 = "Var 1";
+        var1.endsWith("1");
+        List<String> var2 = new ArrayList<String>();
+        var2.add(var1);
+        var1.concat(var1);
+        var2.clear();
+        return var1;
     }
 
 

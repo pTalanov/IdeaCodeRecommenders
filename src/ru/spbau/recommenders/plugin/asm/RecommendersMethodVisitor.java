@@ -1,6 +1,5 @@
 package ru.spbau.recommenders.plugin.asm;
 
-import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.commons.AnalyzerAdapter;
@@ -79,7 +78,7 @@ public class RecommendersMethodVisitor extends AnalyzerAdapter {
         super.visitEnd();
         for (List<String> methodSequence : methodCallSequence.values()) {
             String varType = methodSequence.get(0);
-            if(!sequences.containsKey(varType)) {
+            if (!sequences.containsKey(varType)) {
                 sequences.put(varType, new ArrayList<List<String>>());
             }
             sequences.get(varType).add(methodSequence.subList(1, methodSequence.size()));
