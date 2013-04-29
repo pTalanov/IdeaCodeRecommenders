@@ -25,9 +25,7 @@
                                 implementationClass="ru.spbau.recommenders.plugin.MostPopularMethodContributor"
                                 id="MostPopularMethodContributor" order="first"/>
 
-        <!--<weigher implementationClass="ru.spbau.recommenders.plugin.PopularWeigher"-->
-        <!--key="completion"-->
-        <!--order="first"/>-->
+        <compileServer.plugin classpath="jps/jps-plugin.jar"/>
 
     </extensions>
 </idea-plugin>

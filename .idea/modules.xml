@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/IdeaCodeRecommenders.iml" filepath="$PROJECT_DIR$/IdeaCodeRecommenders.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" />
     </modules>
   </component>
 </project>
