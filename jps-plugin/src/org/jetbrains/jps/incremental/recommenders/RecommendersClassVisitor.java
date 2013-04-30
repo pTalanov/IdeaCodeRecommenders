@@ -13,9 +13,10 @@ import java.util.Map;
 public class RecommendersClassVisitor extends ClassVisitor {
 
     private final String className;
-    private Map<String, List<List<String>>> sequences;
+    private Map<String, Map<List<String>, Integer>> sequences;
 
-    public RecommendersClassVisitor(String className, Map<String, List<List<String>>> sequences) {
+
+    public RecommendersClassVisitor(String className, Map<String, Map<List<String>, Integer>> sequences) {
         super(Opcodes.ASM4);
         this.className = className;
         this.sequences = sequences;

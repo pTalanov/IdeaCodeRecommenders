@@ -1,6 +1,7 @@
 package ru.spbau.recommenders.plugin;
 
 import com.google.common.collect.Sets;
+import com.intellij.compiler.server.CustomBuilderMessageHandler;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileTypes.FileType;
@@ -48,7 +49,17 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
 
     @Override
     public void initComponent() {
-//        JavaBuilder.registerClassPostProcessor(new RecommendersClassPostProcessor());
+        StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
+            @Override
+            public void run() {
+                project.getMessageBus().connect().subscribe(CustomBuilderMessageHandler.TOPIC, new CustomBuilderMessageHandler() {
+                    @Override
+                    public void messageReceived(String builderId, String messageType, String messageText) {
+                        System.out.println(messageText);
+                    }
+                });
+            }
+        });
     }
 
     @Override

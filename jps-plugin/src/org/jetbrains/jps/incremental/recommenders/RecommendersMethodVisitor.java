@@ -11,11 +11,11 @@ import java.util.*;
  * @author Osipov Stanislav
  */
 public class RecommendersMethodVisitor extends AnalyzerAdapter {
-    private Map<String, List<List<String>>> sequences;
+    private Map<String, Map<List<String>, Integer>> sequences;
     private Map<Integer, Integer> localVariablesMap = new HashMap<Integer, Integer>();
     private Map<Integer, List<String>> methodCallSequence = new HashMap<Integer, List<String>>();
 
-    public RecommendersMethodVisitor(String owner, int access, String name, String desc, Map<String, List<List<String>>> sequences) {
+    public RecommendersMethodVisitor(String owner, int access, String name, String desc, Map<String, Map<List<String>, Integer>> sequences) {
         super(Opcodes.ASM4, owner, access, name, desc, new MethodVisitor(Opcodes.ASM4) {
         });
         this.sequences = sequences;
@@ -81,10 +81,17 @@ public class RecommendersMethodVisitor extends AnalyzerAdapter {
                 continue;
             }
             String varType = methodSequence.get(0);
-            if (!sequences.containsKey(varType)) {
-                sequences.put(varType, new ArrayList<List<String>>());
+            List<String> sequence = methodSequence.subList(1, methodSequence.size());
+            Map<List<String>, Integer> currentSequences = sequences.get(varType);
+            if (currentSequences == null) {
+                currentSequences = new HashMap<List<String>, Integer>();
             }
-            sequences.get(varType).add(methodSequence.subList(1, methodSequence.size()));
+            Integer sequenceCounter = currentSequences.get(sequence);
+            if (sequenceCounter == null) {
+                sequenceCounter = 0;
+            }
+            currentSequences.put(sequence, ++sequenceCounter);
+            sequences.put(varType, currentSequences);
         }
     }
 

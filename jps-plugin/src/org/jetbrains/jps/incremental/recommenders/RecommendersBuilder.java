@@ -10,9 +10,11 @@ import org.jetbrains.jps.incremental.BinaryContent;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.CompiledClass;
 import org.jetbrains.jps.incremental.instrumentation.BaseInstrumentingBuilder;
+import org.jetbrains.jps.incremental.messages.CustomBuilderMessage;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class RecommendersBuilder extends BaseInstrumentingBuilder {
@@ -39,11 +41,13 @@ public class RecommendersBuilder extends BaseInstrumentingBuilder {
     @Override
     protected BinaryContent instrument(CompileContext context, CompiledClass compiled, ClassReader reader, ClassWriter writer, InstrumentationClassFinder finder) {
 
-        HashMap<String, List<List<String>>> sequences = new HashMap<String, List<List<String>>>();
+
+        Map<String, Map<List<String>, Integer>> sequences = new HashMap<String, Map<List<String>, Integer>>();
         RecommendersClassVisitor instrumenter = new RecommendersClassVisitor(compiled.getClassName(), sequences);
 
         try {
             reader.accept(instrumenter, ClassReader.EXPAND_FRAMES);
+            context.processMessage(new CustomBuilderMessage("6969", "696969", sequences.toString()));
             System.out.println(compiled.getClassName());
             System.out.println(sequences);
         } catch (Exception e) {
