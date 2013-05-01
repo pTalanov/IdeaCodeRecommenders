@@ -36,4 +36,12 @@ public class TestClass {
         return new StringBuilder(s);
     }
 
+    public StringBuilder oneLocalVariableMethod2() {
+        String s = "Test string";
+        s.lastIndexOf("Simple string", 1);
+        s.length();
+        s.charAt(6);
+        return new StringBuilder(s);
+    }
+
 }

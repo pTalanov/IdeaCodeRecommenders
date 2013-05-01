@@ -1,4 +1,4 @@
-package org.jetbrains.jps.incremental.recommenders;
+package ru.spbau.jps.incremental.recommenders;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.incremental.BuilderService;

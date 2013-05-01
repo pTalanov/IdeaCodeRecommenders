@@ -3,7 +3,7 @@ import org.jetbrains.asm4.Opcodes;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.spbau.recommenders.plugin.asm.RecommendersClassVisitor;
+import ru.spbau.jps.incremental.recommenders.RecommendersClassVisitor;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -26,9 +26,10 @@ public class RecommendersClassVisitorTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        File src = new File("testData/TestClass.java");
-        out = new File("testData/TestClass.class");
-        Runtime.getRuntime().exec("javac " + src.getAbsolutePath());
+        File src = new File("recommenders-jps-plugin/testData/TestClass.java");
+        out = new File("recommenders-jps-plugin/testData/TestClass.class");
+        String absolutePath = src.getAbsolutePath();
+        Runtime.getRuntime().exec("javac " + absolutePath);
         while (!out.exists()) {
         }
         inputStream = new BufferedInputStream(new FileInputStream(out));
@@ -44,7 +45,7 @@ public class RecommendersClassVisitorTest {
 
     @Test
     public void testVisitMethod() throws Exception {
-        Map<String, List<List<String>>> sequences = new HashMap<String, List<List<String>>>();
+        Map<String, Map<List<String>, Integer>> sequences = new HashMap<String, Map<List<String>, Integer>>();
         reader.accept(new RecommendersClassVisitor("TestClass", sequences), Opcodes.ASM4);
         assertTrue(true);
     }

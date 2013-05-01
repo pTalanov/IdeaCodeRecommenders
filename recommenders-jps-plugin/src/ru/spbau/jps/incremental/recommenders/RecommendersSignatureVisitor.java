@@ -1,5 +1,6 @@
-package ru.spbau.recommenders.plugin.asm;
+package ru.spbau.jps.incremental.recommenders;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.signature.SignatureVisitor;
 
@@ -8,13 +9,14 @@ import java.util.List;
 /**
  * @author Osipov Stanislav
  */
-public class RecommendersSignatureVisitor extends SignatureVisitor {
+public final class RecommendersSignatureVisitor extends SignatureVisitor {
 
-    public RecommendersSignatureVisitor(List<String> signature) {
+    public RecommendersSignatureVisitor(@NotNull List<String> signature) {
         super(Opcodes.ASM4);
         this.signature = signature;
     }
 
+    @NotNull
     private List<String> signature;
 
     @Override
@@ -52,7 +54,7 @@ public class RecommendersSignatureVisitor extends SignatureVisitor {
     }
 
     @Override
-    public void visitClassType(String s) {
+    public void visitClassType(@NotNull String s) {
         signature.add(s);
         super.visitClassType(s);
     }

@@ -1,4 +1,4 @@
-package org.jetbrains.jps.incremental.recommenders;
+package ru.spbau.jps.incremental.recommenders;
 
 import com.intellij.compiler.instrumentation.InstrumentationClassFinder;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +48,6 @@ public class RecommendersBuilder extends BaseInstrumentingBuilder {
         try {
             reader.accept(instrumenter, ClassReader.EXPAND_FRAMES);
             context.processMessage(new CustomBuilderMessage("6969", "696969", sequences.toString()));
-            System.out.println(compiled.getClassName());
-            System.out.println(sequences);
         } catch (Exception e) {
             e.printStackTrace();
         }
