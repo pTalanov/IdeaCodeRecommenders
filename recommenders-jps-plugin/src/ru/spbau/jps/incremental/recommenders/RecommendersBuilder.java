@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class RecommendersBuilder extends BaseInstrumentingBuilder {
+public final class RecommendersBuilder extends BaseInstrumentingBuilder {
     public RecommendersBuilder() {
     }
 
@@ -57,7 +57,6 @@ public class RecommendersBuilder extends BaseInstrumentingBuilder {
 
     @Override
     protected String getProgressMessage() {
-        //TODO
-        return "Adding pattern assertions...";
+        return "Collecting information for recommendations...";
     }
 }

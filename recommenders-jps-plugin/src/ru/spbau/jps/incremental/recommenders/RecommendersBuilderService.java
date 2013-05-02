@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class RecommendersBuilderService extends BuilderService {
+public final class RecommendersBuilderService extends BuilderService {
     @NotNull
     @Override
     public List<? extends ModuleLevelBuilder> createModuleLevelBuilders() {

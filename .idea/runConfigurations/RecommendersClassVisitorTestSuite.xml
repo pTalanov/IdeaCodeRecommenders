@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="RecommendersClassVisitorTest" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="RecommendersClassVisitorTestSuite" type="JUnit" factoryName="JUnit">
     <module name="recommenders-jps-plugin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="" />
-    <option name="MAIN_CLASS_NAME" value="RecommendersClassVisitorTest" />
+    <option name="MAIN_CLASS_NAME" value="RecommendersClassVisitorTestSuite" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <option name="VM_PARAMETERS" value="-ea" />
