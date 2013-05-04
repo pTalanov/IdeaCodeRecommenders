@@ -1,4 +1,4 @@
-package org.jetbrains.jps.incremental.recommenders;
+package ru.spbau.jps.incremental.recommenders;
 
 import com.intellij.compiler.instrumentation.InstrumentationClassFinder;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,6 @@ public class RecommendersBuilder extends BaseInstrumentingBuilder {
 
     @Override
     protected String getProgressMessage() {
-        //TODO
-        return "Adding pattern assertions...";
+        return "Collecting information for recommendations...";
     }
 }

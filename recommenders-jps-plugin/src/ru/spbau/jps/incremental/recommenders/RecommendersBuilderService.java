@@ -1,4 +1,4 @@
-package org.jetbrains.jps.incremental.recommenders;
+package ru.spbau.jps.incremental.recommenders;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.incremental.BuilderService;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class RecommendersBuilderService extends BuilderService {
+public final class RecommendersBuilderService extends BuilderService {
     @NotNull
     @Override
     public List<? extends ModuleLevelBuilder> createModuleLevelBuilders() {

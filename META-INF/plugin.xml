@@ -25,7 +25,7 @@
                                 implementationClass="ru.spbau.recommenders.plugin.MostPopularMethodContributor"
                                 id="MostPopularMethodContributor" order="first"/>
 
-        <compileServer.plugin classpath="jps/jps-plugin.jar"/>
+        <compileServer.plugin classpath="jps/recommenders-jps-plugin.jar"/>
 
     </extensions>
 </idea-plugin>
