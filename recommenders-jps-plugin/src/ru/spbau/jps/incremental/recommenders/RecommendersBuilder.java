@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class RecommendersBuilder extends BaseInstrumentingBuilder {
+public final class RecommendersBuilder extends BaseInstrumentingBuilder {
     public static final String BUILDER_ID = "6969";
     public static final String MESSAGE_TYPE = "696969";
     private StringSerializer<HashMap<String, Map<List<String>, Integer>>> serializer = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
@@ -51,7 +51,6 @@ public class RecommendersBuilder extends BaseInstrumentingBuilder {
 
         try {
             reader.accept(instrumenter, ClassReader.EXPAND_FRAMES);
-            //context.processMessage(new CustomBuilderMessage("6969", "696969", sequences.toString()));
             context.processMessage(new CustomBuilderMessage(BUILDER_ID, MESSAGE_TYPE, serializer.serialize(sequences)));
             System.out.println(compiled.getClassName());
             System.out.println(sequences);

@@ -1,7 +1,6 @@
 package ru.spbau.jps.incremental.recommenders;
 
 import java.io.*;
-import java.util.ArrayList;
 
 /**
  * @author Goncharova Irina
@@ -12,32 +11,22 @@ public class StringSerializer<T extends Serializable> {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oStream = new ObjectOutputStream(baos);
         oStream.writeObject(arg);
-        return new String(baos.toByteArray(), "ISO-8859-1");
+        byte[] data = baos.toByteArray();
+        oStream.close();
+        return new String(data, "ISO-8859-1");
     }
 
-    public T deserialize(String arg) throws IOException, ClassNotFoundException {
+    public T deserialize(String arg) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(arg.getBytes("ISO-8859-1"));
         ObjectInputStream iStream = new ObjectInputStream(bais);
-        return (T) iStream.readObject();
-    }
-
-    public static void main(String[] args) {
-        ArrayList<Integer> arrayList = new ArrayList<Integer>();
-        for (int i = 0; i < 10; ++i) {
-            arrayList.add(i);
-        }
-        StringSerializer<ArrayList<Integer>> serializer = new StringSerializer<ArrayList<Integer>>();
+        T result = null;
         try {
-            String s = serializer.serialize(arrayList);
-            ArrayList<Integer> result = serializer.deserialize(s);
-            for (int i = 0; i < 10; ++i) {
-                System.out.println(result.get(i));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            result = (T) iStream.readObject();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Serializer malfunction: ClassNotFoundException in ObjectInputStream");
+        } finally {
+            iStream.close();
         }
+        return result;
     }
-
 }
