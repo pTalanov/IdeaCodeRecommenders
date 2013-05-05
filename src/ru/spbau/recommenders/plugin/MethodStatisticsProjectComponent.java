@@ -18,14 +18,19 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.jps.incremental.recommenders.RecommendersBuilder;
+import ru.spbau.jps.incremental.recommenders.StringSerializer;
 
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
+ * @author Goncharova Irina
  */
 public final class MethodStatisticsProjectComponent implements ProjectComponent {
+    private StringSerializer<HashMap<String, Map<List<String>, Integer>>> deserializer = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
+
 
     @NotNull
     public static MethodStatisticsProjectComponent getInstance(@NotNull Project project) {
@@ -55,7 +60,17 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
                 project.getMessageBus().connect().subscribe(CustomBuilderMessageHandler.TOPIC, new CustomBuilderMessageHandler() {
                     @Override
                     public void messageReceived(String builderId, String messageType, String messageText) {
+                        if (builderId.equals(RecommendersBuilder.BUILDER_ID) && messageType.equals(RecommendersBuilder.MESSAGE_TYPE)) {
+                        try {
+                            HashMap<String, Map<List<String>, Integer>> result = deserializer.deserialize(messageText);
+                            System.out.println(result);
+                        } catch (IOException e) {
+                            e.printStackTrace();//TODIDUDIDO
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();//TODO
+                        }
                         System.out.println(messageText);
+                    }
                     }
                 });
             }

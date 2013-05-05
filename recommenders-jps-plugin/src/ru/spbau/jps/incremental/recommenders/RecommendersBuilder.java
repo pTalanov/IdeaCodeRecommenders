@@ -11,7 +11,6 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.CompiledClass;
 import org.jetbrains.jps.incremental.instrumentation.BaseInstrumentingBuilder;
 import org.jetbrains.jps.incremental.messages.CustomBuilderMessage;
-import ru.spbau.recommenders.plugin.StringSerializer;
 
 import java.util.HashMap;
 import java.util.List;
