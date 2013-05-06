@@ -44,16 +44,11 @@ public final class RecommendersBuilder extends BaseInstrumentingBuilder {
     @Nullable
     @Override
     protected BinaryContent instrument(CompileContext context, CompiledClass compiled, ClassReader reader, ClassWriter writer, InstrumentationClassFinder finder) {
-
-
         HashMap<String, Map<List<String>, Integer>> sequences = new HashMap<String, Map<List<String>, Integer>>();
         RecommendersClassVisitor instrumenter = new RecommendersClassVisitor(compiled.getClassName(), sequences);
-
         try {
             reader.accept(instrumenter, ClassReader.EXPAND_FRAMES);
             context.processMessage(new CustomBuilderMessage(BUILDER_ID, MESSAGE_TYPE, serializer.serialize(sequences)));
-            System.out.println(compiled.getClassName());
-            System.out.println(sequences);
         } catch (Exception e) {
             e.printStackTrace();
         }

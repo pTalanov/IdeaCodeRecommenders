@@ -32,9 +32,6 @@ import java.util.Set;
  * @author Goncharova Irina
  */
 public final class MethodStatisticsProjectComponent implements ProjectComponent {
-    private StringSerializer<HashMap<String, Map<List<String>, Integer>>> deserializer = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
-
-
     @NotNull
     public static MethodStatisticsProjectComponent getInstance(@NotNull Project project) {
         return project.getComponent(MethodStatisticsProjectComponent.class);
@@ -44,6 +41,10 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     public String getMostUsedMethodName(@NotNull String typeName, @NotNull List<String> callSequence) {
         return methodCallData.getMostCalledMethod(typeName, callSequence);
     }
+
+    @NotNull
+    private StringSerializer<HashMap<String, Map<List<String>, Integer>>> deserializer
+            = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
 
     @NotNull
     private final MethodCallData methodCallData = new MethodCallData();
@@ -66,13 +67,12 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
                         if (builderId.equals(RecommendersBuilder.BUILDER_ID) && messageType.equals(RecommendersBuilder.MESSAGE_TYPE)) {
                             try {
                                 HashMap<String, Map<List<String>, Integer>> result = deserializer.deserialize(messageText);
+                                //TODO: process result
                                 System.out.println(result);
                             } catch (IOException e) {
-                                e.printStackTrace();//TODO
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();//TODO
+                                //TODO
+                                e.printStackTrace();
                             }
-                            System.out.println(messageText);
                         }
                     }
                 });
@@ -95,7 +95,6 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
             @Override
             public void run() {
 
-//                JavaBuilder.registerClassPostProcessor(new RecommendersClassPostProcessor());
                 CallStatisticsCollector callStatisticsCollector = new CallStatisticsCollector(methodCallData);
                 Set<PsiFile> allPsiFiles = getAllPsiFiles();
                 System.out.println(allPsiFiles);
