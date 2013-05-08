@@ -1,3 +1,5 @@
+package ru.spbau.jps.incremental.recommenders.tests;
+
 import junit.framework.Assert;
 import org.jetbrains.asm4.ClassReader;
 import org.junit.AfterClass;
@@ -27,7 +29,7 @@ public class ForClassTest {
     public static void setUp() throws Exception {
         File src = new File("recommenders-jps-plugin/testData/ForClass.java");
         out = new File("recommenders-jps-plugin/testData/ForClass.class");
-        RecommendersClassVisitorTestSuite.compile(src);
+        RecommendersClassVisitorTestUtils.compile(src);
         inputStream = new BufferedInputStream(new FileInputStream(out));
         reader = new ClassReader(inputStream);
     }
