@@ -1,5 +1,4 @@
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package ru.spbau.jps.incremental.recommenders.tests;
 
 import javax.tools.*;
 import java.io.File;
@@ -12,16 +11,11 @@ import java.util.Locale;
  * @author Osipov Stanislav
  */
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        ForClassTest.class,
-        IfOnLocalVariableClassTest.class,
-        MethodArgumentClassTest.class,
-        OneLocalVariableClassTest.class,
-        EngineTest.class
-})
-public class RecommendersClassVisitorTestSuite {
 
+public final class RecommendersClassVisitorTestUtils {
+
+    private RecommendersClassVisitorTestUtils() {
+    }
 
     public static void compile(File src) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
