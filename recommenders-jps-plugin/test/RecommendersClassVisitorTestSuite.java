@@ -17,7 +17,8 @@ import java.util.Locale;
         ForClassTest.class,
         IfOnLocalVariableClassTest.class,
         MethodArgumentClassTest.class,
-        OneLocalVariableClassTest.class
+        OneLocalVariableClassTest.class,
+        EngineTest.class
 })
 public class RecommendersClassVisitorTestSuite {
 

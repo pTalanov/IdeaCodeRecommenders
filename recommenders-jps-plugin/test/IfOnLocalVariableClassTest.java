@@ -1,3 +1,4 @@
+import junit.framework.Assert;
 import org.jetbrains.asm4.ClassReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -8,7 +9,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,13 +42,9 @@ public class IfOnLocalVariableClassTest {
     @Test
     public void testIfMethod() throws Exception {
         Map<String, Map<List<String>, Integer>> sequences = new HashMap<String, Map<List<String>, Integer>>();
-        reader.accept(new RecommendersClassVisitor("TestClass", sequences), ClassReader.EXPAND_FRAMES);
-        String checkType = "java/lang/String";
-        List<String> checkSequence1 = Arrays.asList("length()int", "charAt(int)char", "getBytes()byte");
-        List<String> checkSequence2 = Arrays.asList("length()int", "lastIndexOf(java/lang/String,int)int", "getBytes()byte");
-        int counter = 1;
-        junit.framework.Assert.assertTrue(sequences.get(checkType).get(checkSequence1) == counter);
-        junit.framework.Assert.assertTrue(sequences.get(checkType).get(checkSequence2) == counter);
+        reader.accept(new RecommendersClassVisitor(out.getName(), sequences), ClassReader.EXPAND_FRAMES);
+        String check = "{java/lang/String={[length()int, charAt(int)char, getBytes()byte]=1, [length()int, lastIndexOf(java/lang/String,int)int, getBytes()byte]=1}}";
+        Assert.assertTrue(check.equals(sequences.toString()));
 
     }
 }

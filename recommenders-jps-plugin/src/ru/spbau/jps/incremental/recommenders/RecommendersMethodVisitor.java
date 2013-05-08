@@ -47,10 +47,10 @@ public final class RecommendersMethodVisitor extends AnalyzerAdapter {
         if (methodCallSequence == null) {
             return;
         }
-        if (localVariablesMap.containsKey(varIndex)) {
-            Integer localVarNumber = localVariablesMap.get(varIndex);
-            if (!localVariableTypes.containsKey(localVarNumber)) {
-                localVariableTypes.put(localVarNumber, owner);
+        Integer localVarNumber = localVariablesMap.remove(varIndex);
+        if (localVarNumber != null) {
+            if (!owner.equals(localVariableTypes.get(localVarNumber))) {
+                return;
             }
             List<List<String>> active = methodCallSequence.get(localVarNumber);
             if (active == null) {
@@ -61,7 +61,6 @@ public final class RecommendersMethodVisitor extends AnalyzerAdapter {
                 sequence.add(representation);
             }
             methodCallSequence.put(localVarNumber, active);
-            localVariablesMap.remove(varIndex);
         }
     }
 
@@ -96,6 +95,9 @@ public final class RecommendersMethodVisitor extends AnalyzerAdapter {
         super.visitVarInsn(i, i2);
         if (stack.size() > prevSize) {
             localVariablesMap.put(stack.size(), i2);
+            Object stackPeek = stack.get(stack.size() - 1);
+            String varType = (stackPeek instanceof String) ? (String) stackPeek : stackPeek.getClass().getName();
+            localVariableTypes.put(i2, varType);
         }
     }
 
