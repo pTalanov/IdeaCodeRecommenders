@@ -1,3 +1,5 @@
+package ru.spbau.jps.incremental.recommenders.tests;
+
 import junit.framework.Assert;
 import org.jetbrains.asm4.ClassReader;
 import org.junit.AfterClass;
