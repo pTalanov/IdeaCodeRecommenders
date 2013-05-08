@@ -9,7 +9,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +42,8 @@ public class MethodArgumentClassTest {
     @Test
     public void testArgumentMethod() throws Exception {
         Map<String, Map<List<String>, Integer>> sequences = new HashMap<String, Map<List<String>, Integer>>();
-        reader.accept(new RecommendersClassVisitor("TestClass", sequences), ClassReader.EXPAND_FRAMES);
-        String checkType = "java/lang/String";
-        List<String> checkSequence = Arrays.asList("lastIndexOf(java/lang/String,int)int", "length()int", "charAt(int)char");
-        int counter = 1;
-        Assert.assertTrue(sequences.get(checkType).get(checkSequence) == counter);
+        reader.accept(new RecommendersClassVisitor(out.getName(), sequences), ClassReader.EXPAND_FRAMES);
+        String check = "{java/lang/String={[lastIndexOf(java/lang/String,int)int, length()int, charAt(int)char]=1}}";
+        Assert.assertTrue(check.equals(sequences.toString()));
     }
 }
