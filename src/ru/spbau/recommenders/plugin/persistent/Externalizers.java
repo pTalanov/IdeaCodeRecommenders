@@ -16,7 +16,7 @@ import java.util.*;
  */
 public final class Externalizers {
 
-    private static final EnumeratorStringDescriptor STRING_EXTERNALIZER = new EnumeratorStringDescriptor();
+    public static final EnumeratorStringDescriptor STRING_EXTERNALIZER = new EnumeratorStringDescriptor();
     private static final DataExternalizer<Integer> INT_EXTERNALIZER = new DataExternalizer<Integer>() {
         @Override
         public void save(DataOutput dataOutput, Integer integer) throws IOException {
@@ -73,16 +73,18 @@ public final class Externalizers {
             return Suggestions.fromMap(data);
         }
     };
+    public static final MapExternalizer<ClassAndCallSequence, Suggestions> DIFFERENCES_EXTERNALIZER
+            = new MapExternalizer<ClassAndCallSequence, Suggestions>(CLASS_AND_CALL_SEQUENCE_KEY_DESCRIPTOR, SUGGESTIONS_EXTERNALIZER);
 
-    private static final class MapExternalizer<K, V> implements DataExternalizer<Map<K, V>> {
+    public static final class MapExternalizer<K, V> implements DataExternalizer<Map<K, V>> {
 
         @NotNull
         private final DataExternalizer<K> keyExternalizer;
         @NotNull
         private final DataExternalizer<V> valueExternalizer;
 
-        private MapExternalizer(@NotNull DataExternalizer<K> keyExternalizer,
-                                @NotNull DataExternalizer<V> valueExternalizer) {
+        public MapExternalizer(@NotNull DataExternalizer<K> keyExternalizer,
+                               @NotNull DataExternalizer<V> valueExternalizer) {
             this.keyExternalizer = keyExternalizer;
             this.valueExternalizer = valueExternalizer;
         }
