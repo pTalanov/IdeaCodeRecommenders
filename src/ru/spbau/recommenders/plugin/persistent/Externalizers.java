@@ -16,9 +16,22 @@ import java.util.*;
  */
 public final class Externalizers {
 
-    public static final EnumeratorStringDescriptor STRING_EXTERNALIZER = new EnumeratorStringDescriptor();
-    public static final ListExternalizer<String> STRING_LIST_EXTERNALIZER = new ListExternalizer<String>(STRING_EXTERNALIZER);
-    public static final KeyDescriptor<ClassAndCallSequence> CLASS_AND_CALL_SEQUENCE_KEY_DESCRIPTOR = new KeyDescriptor<ClassAndCallSequence>() {
+    private static final EnumeratorStringDescriptor STRING_EXTERNALIZER = new EnumeratorStringDescriptor();
+    private static final DataExternalizer<Integer> INT_EXTERNALIZER = new DataExternalizer<Integer>() {
+        @Override
+        public void save(DataOutput dataOutput, Integer integer) throws IOException {
+            dataOutput.writeInt(integer);
+        }
+
+        @Override
+        public Integer read(DataInput dataInput) throws IOException {
+            return dataInput.readInt();
+        }
+    };
+
+    private static final ListExternalizer<String> STRING_LIST_EXTERNALIZER = new ListExternalizer<String>(STRING_EXTERNALIZER);
+    public static final KeyDescriptor<ClassAndCallSequence> CLASS_AND_CALL_SEQUENCE_KEY_DESCRIPTOR
+            = new KeyDescriptor<ClassAndCallSequence>() {
 
         @Override
         public void save(DataOutput out, ClassAndCallSequence value) throws IOException {
@@ -45,28 +58,57 @@ public final class Externalizers {
     };
     public static final DataExternalizer<Suggestions> SUGGESTIONS_EXTERNALIZER = new DataExternalizer<Suggestions>() {
 
+        @NotNull
+        private final MapExternalizer<String, Integer> mapExternalizer
+                = new MapExternalizer<String, Integer>(STRING_EXTERNALIZER, INT_EXTERNALIZER);
+
         @Override
         public void save(DataOutput out, Suggestions value) throws IOException {
-            Collection<Map.Entry<String, Integer>> entries = value.toCollection();
-            out.writeInt(entries.size());
-            for (Map.Entry<String, Integer> entry : entries) {
-                STRING_EXTERNALIZER.save(out, entry.getKey());
-                out.writeInt(entry.getValue());
-            }
+            mapExternalizer.save(out, value.toMap());
         }
 
         @Override
         public Suggestions read(DataInput in) throws IOException {
-            Map<String, Integer> data = new HashMap<String, Integer>();
-            int size = in.readInt();
-            while (--size >= 0) {
-                String key = STRING_EXTERNALIZER.read(in);
-                int value = in.readInt();
-                data.put(key, value);
-            }
+            Map<String, Integer> data = mapExternalizer.read(in);
             return Suggestions.fromMap(data);
         }
     };
+
+    private static final class MapExternalizer<K, V> implements DataExternalizer<Map<K, V>> {
+
+        @NotNull
+        private final DataExternalizer<K> keyExternalizer;
+        @NotNull
+        private final DataExternalizer<V> valueExternalizer;
+
+        private MapExternalizer(@NotNull DataExternalizer<K> keyExternalizer,
+                                @NotNull DataExternalizer<V> valueExternalizer) {
+            this.keyExternalizer = keyExternalizer;
+            this.valueExternalizer = valueExternalizer;
+        }
+
+        @Override
+        public void save(DataOutput dataOutput, Map<K, V> map) throws IOException {
+            Set<Map.Entry<K, V>> entries = map.entrySet();
+            dataOutput.writeInt(entries.size());
+            for (Map.Entry<K, V> entry : entries) {
+                keyExternalizer.save(dataOutput, entry.getKey());
+                valueExternalizer.save(dataOutput, entry.getValue());
+            }
+        }
+
+        @Override
+        public Map<K, V> read(DataInput dataInput) throws IOException {
+            HashMap<K, V> result = new HashMap<K, V>();
+            int size = dataInput.readInt();
+            while (--size >= 0) {
+                K key = keyExternalizer.read(dataInput);
+                V value = valueExternalizer.read(dataInput);
+                result.put(key, value);
+            }
+            return result;
+        }
+    }
 
     private static final class ListExternalizer<T> implements DataExternalizer<List<T>> {
 
@@ -95,9 +137,6 @@ public final class Externalizers {
         }
     }
 
-
     private Externalizers() {
     }
-
-
 }
