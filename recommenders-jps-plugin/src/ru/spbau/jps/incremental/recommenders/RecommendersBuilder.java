@@ -20,7 +20,7 @@ import java.util.Map;
 public final class RecommendersBuilder extends BaseInstrumentingBuilder {
     public static final String BUILDER_ID = "6969";
     public static final String MESSAGE_TYPE = "696969";
-    private StringSerializer<HashMap<String, Map<List<String>, Integer>>> serializer = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
+    private StringSerializer<RecommendersMessageData> serializer = new StringSerializer<RecommendersMessageData>();
 
     public RecommendersBuilder() {
     }
@@ -48,7 +48,10 @@ public final class RecommendersBuilder extends BaseInstrumentingBuilder {
         RecommendersClassVisitor instrumenter = new RecommendersClassVisitor(compiled.getClassName(), sequences);
         try {
             reader.accept(instrumenter, ClassReader.EXPAND_FRAMES);
-            context.processMessage(new CustomBuilderMessage(BUILDER_ID, MESSAGE_TYPE, serializer.serialize(sequences)));
+            String sourceId = compiled.getOutputFile().getAbsolutePath();
+            RecommendersMessageData messageData = new RecommendersMessageData(sourceId, sequences);
+            String serializedData = serializer.serialize(messageData);
+            context.processMessage(new CustomBuilderMessage(BUILDER_ID, MESSAGE_TYPE, serializedData));
         } catch (Exception e) {
             e.printStackTrace();
         }
