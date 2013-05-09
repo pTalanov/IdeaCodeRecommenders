@@ -11,7 +11,6 @@ import com.intellij.util.io.PersistentHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.recommenders.plugin.data.Suggestions;
-import ru.spbau.recommenders.plugin.storage.MethodStatisticsStorage;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +23,7 @@ import static ru.spbau.recommenders.plugin.persistent.Externalizers.SUGGESTIONS_
 /**
  * @author Pavel Talanov
  */
-public final class PersistentStorage implements MethodStatisticsStorage {
+public final class PersistentStorage {
 
     private static final Logger LOG = Logger.getInstance("#ru.spbau.recommenders.plugin.persistent.PersistentStorage");
 
@@ -61,7 +60,6 @@ public final class PersistentStorage implements MethodStatisticsStorage {
         }
     }
 
-    @Override
     public void registerCallSequence(@NotNull String typeName, @NotNull List<String> callSequence, @NotNull String methodToSuggest) {
         ClassAndCallSequence key = new ClassAndCallSequence(typeName, callSequence);
         try {
@@ -78,7 +76,6 @@ public final class PersistentStorage implements MethodStatisticsStorage {
     }
 
     @Nullable
-    @Override
     public Suggestions getSuggestions(@NotNull String typeName, @NotNull List<String> callSequence) {
         try {
             return storage.get(new ClassAndCallSequence(typeName, callSequence));
