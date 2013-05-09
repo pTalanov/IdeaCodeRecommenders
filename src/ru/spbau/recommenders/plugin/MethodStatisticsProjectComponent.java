@@ -57,7 +57,7 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
                         if (builderId.equals(RecommendersBuilder.BUILDER_ID) && messageType.equals(RecommendersBuilder.MESSAGE_TYPE)) {
                             try {
                                 RecommendersMessageData message = deserializer.deserialize(messageText);
-                                storage.proccessDiff(message.getSequencesData());
+                                storage.processMessage(message);
                             } catch (IOException e) {
                                 //TODO
                                 e.printStackTrace();

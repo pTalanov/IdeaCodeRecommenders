@@ -16,13 +16,25 @@ public final class Suggestions {
     @NotNull
     private final Map<String, Integer> methodNameToUsageCount = new HashMap<String, Integer>();
 
-    public void registerUsage(@NotNull String methodName) {
+    public void registerUsage(@NotNull String methodName, int count) {
         //TODO: manage overflows
         Integer usageCount = methodNameToUsageCount.get(methodName);
         if (usageCount == null) {
-            methodNameToUsageCount.put(methodName, 1);
+            methodNameToUsageCount.put(methodName, count);
         } else {
-            methodNameToUsageCount.put(methodName, usageCount + 1);
+            methodNameToUsageCount.put(methodName, usageCount + count);
+        }
+    }
+
+    public void subtract(@NotNull Suggestions other) {
+        for (Map.Entry<String, Integer> entry : other.methodNameToUsageCount.entrySet()) {
+            registerUsage(entry.getKey(), -entry.getValue());
+        }
+    }
+
+    public void mergeIn(@NotNull Suggestions other) {
+        for (Map.Entry<String, Integer> entry : other.methodNameToUsageCount.entrySet()) {
+            registerUsage(entry.getKey(), entry.getValue());
         }
     }
 
@@ -55,5 +67,21 @@ public final class Suggestions {
         Suggestions suggestions = new Suggestions();
         suggestions.methodNameToUsageCount.putAll(data);
         return suggestions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Suggestions that = (Suggestions) o;
+
+        return methodNameToUsageCount.equals(that.methodNameToUsageCount);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return methodNameToUsageCount.hashCode();
     }
 }
