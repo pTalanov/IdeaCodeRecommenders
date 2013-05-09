@@ -15,12 +15,12 @@ public final class RecommendersMessageData implements Serializable {
     private final String sourceId;
 
     @NotNull
-    private final Map<String, Map<List<String>, Integer>> sequencesData;
+    private final SequencesData sequencesData;
 
     public RecommendersMessageData(@NotNull String sourceId,
                                    @NotNull Map<String, Map<List<String>, Integer>> sequencesData) {
         this.sourceId = sourceId;
-        this.sequencesData = sequencesData;
+        this.sequencesData = new SequencesData(sequencesData);
     }
 
     @NotNull
@@ -29,7 +29,7 @@ public final class RecommendersMessageData implements Serializable {
     }
 
     @NotNull
-    public Map<String, Map<List<String>, Integer>> getSequencesData() {
+    public SequencesData getSequencesData() {
         return sequencesData;
     }
 }
