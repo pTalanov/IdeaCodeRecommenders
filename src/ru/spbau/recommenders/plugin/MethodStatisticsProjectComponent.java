@@ -7,14 +7,13 @@ import com.intellij.openapi.startup.StartupManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.jps.incremental.recommenders.RecommendersBuilder;
+import ru.spbau.jps.incremental.recommenders.RecommendersMessageData;
 import ru.spbau.jps.incremental.recommenders.StringSerializer;
 import ru.spbau.recommenders.plugin.data.Suggestions;
 import ru.spbau.recommenders.plugin.persistent.PersistentStorage;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Pavel Talanov
@@ -35,8 +34,8 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
     private PersistentStorage storage;
 
     @NotNull
-    private StringSerializer<HashMap<String, Map<List<String>, Integer>>> deserializer
-            = new StringSerializer<HashMap<String, Map<List<String>, Integer>>>();
+    private StringSerializer<RecommendersMessageData> deserializer
+            = new StringSerializer<RecommendersMessageData>();
 
 
     @NotNull
@@ -57,8 +56,8 @@ public final class MethodStatisticsProjectComponent implements ProjectComponent 
                     public void messageReceived(String builderId, String messageType, String messageText) {
                         if (builderId.equals(RecommendersBuilder.BUILDER_ID) && messageType.equals(RecommendersBuilder.MESSAGE_TYPE)) {
                             try {
-                                HashMap<String, Map<List<String>, Integer>> result = deserializer.deserialize(messageText);
-                                storage.proccessDiff(result);
+                                RecommendersMessageData message = deserializer.deserialize(messageText);
+                                storage.proccessDiff(message.getSequencesData());
                             } catch (IOException e) {
                                 //TODO
                                 e.printStackTrace();
