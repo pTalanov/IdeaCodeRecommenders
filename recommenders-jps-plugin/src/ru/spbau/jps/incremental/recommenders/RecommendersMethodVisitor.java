@@ -15,6 +15,7 @@ import java.util.*;
  */
 public final class RecommendersMethodVisitor extends AnalyzerAdapter {
 
+    public static final int SEQUENCES_NUMBER_LIMIT = 2048;
     @NotNull
     private Map<String, Map<List<String>, Integer>> sequences;
     @NotNull
@@ -109,6 +110,7 @@ public final class RecommendersMethodVisitor extends AnalyzerAdapter {
     public void visitJumpInsn(int opcode, Label label) {
         super.visitJumpInsn(opcode, label);
         if (visitedLabels.add(label)) {
+
             cachedSequences.put(label, getMethodSequencesCopy());
             if (opcode == Opcodes.GOTO) {
                 methodCallSequence = null;
@@ -155,7 +157,9 @@ public final class RecommendersMethodVisitor extends AnalyzerAdapter {
             if (sequences == null) {
                 sequences = new ArrayList<List<String>>();
             }
-            sequences.addAll(sequenceEntry.getValue());
+            if (sequences.size() < SEQUENCES_NUMBER_LIMIT) {
+                sequences.addAll(sequenceEntry.getValue());
+            }
             methodCallSequence.put(sequenceEntry.getKey(), sequences);
         }
     }
