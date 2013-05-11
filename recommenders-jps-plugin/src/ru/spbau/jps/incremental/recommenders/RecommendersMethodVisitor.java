@@ -36,6 +36,10 @@ public final class RecommendersMethodVisitor extends AnalyzerAdapter {
 
     @Override
     public void visitMethodInsn(int opcode, @NotNull String owner, @NotNull String name, @NotNull String sign) {
+        if (opcode == Opcodes.INVOKESTATIC) {
+            super.visitMethodInsn(opcode, owner, name, sign);
+            return;
+        }
         List<String> signature = parseSignature(sign);
         int varIndex = stack.size() - signature.size() + 1;
         String representation = name + toStringRepresentation(signature);
