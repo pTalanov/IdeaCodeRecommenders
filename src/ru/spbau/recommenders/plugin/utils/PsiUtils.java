@@ -16,13 +16,6 @@ public final class PsiUtils {
     private PsiUtils() {
     }
 
-
-    @Nullable
-    public static String getMethodName(@NotNull PsiMethodCallExpression expression) {
-        PsiReferenceExpression methodExpression = expression.getMethodExpression();
-        return methodExpression.getReferenceName();
-    }
-
     @Nullable
     public static String getReferencedName(@NotNull PsiMethodCallExpression expression) {
         PsiReferenceExpression methodExpression = expression.getMethodExpression();
@@ -72,35 +65,58 @@ public final class PsiUtils {
 
                 super.visitMethodCallExpression(expression);
 
-                String methodName = getMethodName(expression);
                 String referencedName = getReferencedName(expression);
-                if (methodName == null || referencedName == null) {
-                    return;
-                }
-
-                if (referencedName.equals(qualifier.getReferenceName())) {
-                    Map<PsiTypeParameter, PsiType> map = new HashMap<PsiTypeParameter, PsiType>();
-                    PsiElementFactory factory = JavaPsiFacade.getElementFactory(expression.getProject());
-                    for (PsiTypeParameter parameter : expression.resolveMethod().getTypeParameters()) {
-                        PsiClass superClass = parameter.getSuperClass();
-                        map.put(parameter, factory.createType(superClass));
-                    }
-                    PsiSubstitutor substitutor = PsiSubstitutorImpl.createSubstitutor(map);
-                    PsiType returnType = substitutor.substitute(expression.resolveMethod().getReturnTypeNoResolve());
-                    PsiType[] types = expression.resolveMethod().getSignature(substitutor).getParameterTypes();
-                    StringBuilder result = new StringBuilder();
-                    result.append(methodName).append("(");
-                    for (int i = 0; i < types.length; ++i) {
-                        result.append(types[i].getCanonicalText());
-                        if (i < types.length - 1) {
-                            result.append(",");
-                        }
-                    }
-                    result.append(")").append(returnType.getCanonicalText());
-                    prefixSequence.add(result.toString());
+                if ((referencedName != null) && (referencedName.equals(qualifier.getReferenceName()))) {
+                    prefixSequence.add(getMethodSignature(expression));
                 }
             }
         });
         return prefixSequence;
+    }
+
+    @Nullable
+    private static String getMethodSignature(@NotNull PsiMethodCallExpression expression) {
+        PsiMethod psiMethod = expression.resolveMethod();
+        if (psiMethod == null) {
+            return null;
+        }
+        PsiSubstitutor substitutor = createTypeSubstitutor(psiMethod);
+        PsiType unsubstitutedReturnType = psiMethod.getReturnTypeNoResolve();
+        if (unsubstitutedReturnType == null) {
+            return null;
+        }
+        PsiType returnType = substitutor.substitute(unsubstitutedReturnType);
+        PsiType[] parameterTypes = psiMethod.getSignature(substitutor).getParameterTypes();
+        return constructSignatureString(psiMethod.getName(), returnType, parameterTypes);
+    }
+
+    @NotNull
+    private static PsiSubstitutor createTypeSubstitutor(@NotNull PsiMethod psiMethod) {
+        PsiElementFactory factory = JavaPsiFacade.getElementFactory(psiMethod.getProject());
+        Map<PsiTypeParameter, PsiType> map = new HashMap<PsiTypeParameter, PsiType>();
+        for (PsiTypeParameter parameter : psiMethod.getTypeParameters()) {
+            PsiClass superClass = parameter.getSuperClass();
+            if (superClass != null) {
+                map.put(parameter, factory.createType(superClass));
+            }
+        }
+        return PsiSubstitutorImpl.createSubstitutor(map);
+    }
+
+    @NotNull
+    private static String constructSignatureString(@NotNull String methodName,
+                                                   @NotNull PsiType returnType,
+                                                   @NotNull PsiType[] parameterTypes
+    ) {
+        StringBuilder result = new StringBuilder();
+        result.append(methodName).append("(");
+        for (int i = 0; i < parameterTypes.length; ++i) {
+            result.append(parameterTypes[i].getCanonicalText());
+            if (i < parameterTypes.length - 1) {
+                result.append(",");
+            }
+        }
+        result.append(")").append(returnType.getCanonicalText());
+        return result.toString();
     }
 }
