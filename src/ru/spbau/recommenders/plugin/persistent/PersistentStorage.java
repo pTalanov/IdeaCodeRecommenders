@@ -120,14 +120,7 @@ public final class PersistentStorage {
             String realTypeName = typeName.replace("/", ".");
             for (Map.Entry<List<String>, Integer> sequenceAndCount : stringMapEntry.getValue().entrySet()) {
                 List<String> sequence = sequenceAndCount.getKey();
-//                List<String> realSequence = ContainerUtil.map(sequence, new Function<String, String>() {
-//                    @Override
-//                    public String fun(String s) {
-//                        return s.substring(0, s.indexOf("("));
-//                    }
-//                });
                 Integer count = sequenceAndCount.getValue();
-
                 processOneSequence(result, realTypeName, sequence, count);
             }
         }
