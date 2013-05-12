@@ -51,7 +51,11 @@ public class RecommendationProvider {
         if (suggestions == null) {
             return null;
         }
-        final String mostUsedMethodName = suggestions.getMostUsedSuggestion();
+        String mostUsedSuggestion = suggestions.getMostUsedSuggestion();
+        if (mostUsedSuggestion == null) {
+            return null;
+        }
+        final String mostUsedMethodName = mostUsedSuggestion.substring(0, mostUsedSuggestion.indexOf("("));
         return new Recommendation() {
             @Override
             public double getPriority(@NotNull LookupElement lookupElement) {
