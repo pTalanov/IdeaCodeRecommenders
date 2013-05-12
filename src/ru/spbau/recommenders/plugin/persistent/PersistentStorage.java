@@ -4,9 +4,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.PersistentHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,14 +120,15 @@ public final class PersistentStorage {
             String realTypeName = typeName.replace("/", ".");
             for (Map.Entry<List<String>, Integer> sequenceAndCount : stringMapEntry.getValue().entrySet()) {
                 List<String> sequence = sequenceAndCount.getKey();
-                List<String> realSequence = ContainerUtil.map(sequence, new Function<String, String>() {
-                    @Override
-                    public String fun(String s) {
-                        return s.substring(0, s.indexOf("("));
-                    }
-                });
+//                List<String> realSequence = ContainerUtil.map(sequence, new Function<String, String>() {
+//                    @Override
+//                    public String fun(String s) {
+//                        return s.substring(0, s.indexOf("("));
+//                    }
+//                });
                 Integer count = sequenceAndCount.getValue();
-                processOneSequence(result, realTypeName, realSequence, count);
+
+                processOneSequence(result, realTypeName, sequence, count);
             }
         }
         return result;

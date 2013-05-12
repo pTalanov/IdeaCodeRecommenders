@@ -1,16 +1,16 @@
 package ru.spbau.recommenders.plugin.utils;
 
 import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiSubstitutorImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
+ * @author Goncharova Irina
  */
 public final class PsiUtils {
     private PsiUtils() {
@@ -79,7 +79,25 @@ public final class PsiUtils {
                 }
 
                 if (referencedName.equals(qualifier.getReferenceName())) {
-                    prefixSequence.add(methodName);
+                    Map<PsiTypeParameter, PsiType> map = new HashMap<PsiTypeParameter, PsiType>();
+                    PsiElementFactory factory = JavaPsiFacade.getElementFactory(expression.getProject());
+                    for (PsiTypeParameter parameter : expression.resolveMethod().getTypeParameters()) {
+                        PsiClass superClass = parameter.getSuperClass();
+                        map.put(parameter, factory.createType(superClass));
+                    }
+                    PsiSubstitutor substitutor = PsiSubstitutorImpl.createSubstitutor(map);
+                    PsiType returnType = substitutor.substitute(expression.resolveMethod().getReturnTypeNoResolve());
+                    PsiType[] types = expression.resolveMethod().getSignature(substitutor).getParameterTypes();
+                    StringBuilder result = new StringBuilder();
+                    result.append(methodName).append("(");
+                    for (int i = 0; i < types.length; ++i) {
+                        result.append(types[i].getCanonicalText());
+                        if (i < types.length - 1) {
+                            result.append(",");
+                        }
+                    }
+                    result.append(")").append(returnType.getCanonicalText());
+                    prefixSequence.add(result.toString());
                 }
             }
         });
