@@ -111,12 +111,28 @@ public final class PsiUtils {
         StringBuilder result = new StringBuilder();
         result.append(methodName).append("(");
         for (int i = 0; i < parameterTypes.length; ++i) {
-            result.append(parameterTypes[i].getCanonicalText());
+            result.append(getTypeNameWithoutGenericParameters(parameterTypes[i]));
             if (i < parameterTypes.length - 1) {
                 result.append(",");
             }
         }
-        result.append(")").append(returnType.getCanonicalText());
-        return result.toString();
+        result.append(")").append(getTypeNameWithoutGenericParameters(returnType));
+        return toBytecodeFormat(result.toString());
+    }
+
+    @NotNull
+    private static String toBytecodeFormat(@NotNull String s) {
+        return s.replace(".", "/");
+    }
+
+    @NotNull
+    private static String getTypeNameWithoutGenericParameters(@NotNull PsiType parameterType) {
+        String canonicalText = parameterType.getCanonicalText();
+        int leftAngleBracketPosition = canonicalText.indexOf("<");
+        if (leftAngleBracketPosition >= 0) {
+            return canonicalText.substring(0, leftAngleBracketPosition);
+        } else {
+            return canonicalText;
+        }
     }
 }
