@@ -13,6 +13,7 @@ import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static ru.spbau.recommenders.plugin.utils.PsiUtils.collectMethodCallsBeforeElementForQualifier;
+import static ru.spbau.recommenders.plugin.utils.PsiUtils.getTypeNameInByteCodeFormat;
 
 /**
  * @author Osipov Stanislav
@@ -43,7 +44,7 @@ public class RecommendationProvider {
                                                           @NotNull PsiReferenceExpression qualifierExpression,
                                                           @NotNull PsiType type
     ) {
-        String typeName = type.getCanonicalText();
+        String typeName = getTypeNameInByteCodeFormat(type);
         List<String> methodsCalledBeforePosition
                 = collectMethodCallsBeforeElementForQualifier(position, qualifierExpression);
         Suggestions suggestions = MethodStatisticsProjectComponent.getInstance(position.getProject())
