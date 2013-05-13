@@ -117,11 +117,10 @@ public final class PersistentStorage {
         Map<ClassAndCallSequence, Suggestions> result = new HashMap<ClassAndCallSequence, Suggestions>();
         for (Map.Entry<String, Map<List<String>, Integer>> stringMapEntry : sequencesData.toMap().entrySet()) {
             String typeName = stringMapEntry.getKey();
-            String realTypeName = typeName.replace("/", ".");
             for (Map.Entry<List<String>, Integer> sequenceAndCount : stringMapEntry.getValue().entrySet()) {
                 List<String> sequence = sequenceAndCount.getKey();
                 Integer count = sequenceAndCount.getValue();
-                processOneSequence(result, realTypeName, sequence, count);
+                processOneSequence(result, typeName, sequence, count);
             }
         }
         return result;
