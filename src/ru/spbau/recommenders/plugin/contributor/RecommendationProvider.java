@@ -53,31 +53,33 @@ public class RecommendationProvider {
         if (suggestions == null) {
             return null;
         }
-        final String mostUsedSuggestion = suggestions.getMostUsedSuggestion();
-        if (mostUsedSuggestion == null) {
-            return null;
-        }
-        return new SignatureRecommendation(mostUsedSuggestion);
+        return new SignatureRecommendation(suggestions.getMostUsedSuggestions());
     }
-
 
     private final static class SignatureRecommendation implements Recommendation {
 
-        private String suggestion;
+        @NotNull
+        private List<String> suggestions;
 
-        private SignatureRecommendation(String suggestion) {
-            this.suggestion = suggestion;
+        private SignatureRecommendation(@NotNull List<String> suggestions) {
+            this.suggestions = suggestions;
         }
 
         @Override
         public double getPriority(@NotNull LookupElement lookupElement) {
-            final String mostUsedMethodName = suggestion.substring(0, suggestion.indexOf("("));
-            if (lookupElement.getLookupString().equals(mostUsedMethodName)) {
-                PsiMethod method = (PsiMethod) lookupElement.getPsiElement();
-                if (method != null && suggestion.equals(PsiUtils.getSignatureString(method))) {
-                    return 1.0;
-                }
-                return 0.5;
+            if (!(lookupElement.getPsiElement() instanceof PsiMethod)) {
+                return 0.0;
+            }
+            PsiMethod method = (PsiMethod) lookupElement.getPsiElement();
+            if (method == null) {
+                return 0;
+            }
+            String signatureString = PsiUtils.getSignatureString(method);
+            if (signatureString == null) {
+                return 0;
+            }
+            if (suggestions.contains(signatureString)) {
+                return 1.0;
             }
             return 0.0;
         }
