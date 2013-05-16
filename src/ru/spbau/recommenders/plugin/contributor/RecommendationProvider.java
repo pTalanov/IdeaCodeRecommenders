@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.recommenders.plugin.MethodStatisticsProjectComponent;
 import ru.spbau.recommenders.plugin.data.Suggestions;
+import ru.spbau.recommenders.plugin.utils.PsiUtils;
 
 import java.util.List;
 
@@ -52,20 +53,33 @@ public class RecommendationProvider {
         if (suggestions == null) {
             return null;
         }
-        String mostUsedSuggestion = suggestions.getMostUsedSuggestion();
+        final String mostUsedSuggestion = suggestions.getMostUsedSuggestion();
         if (mostUsedSuggestion == null) {
             return null;
         }
-        final String mostUsedMethodName = mostUsedSuggestion.substring(0, mostUsedSuggestion.indexOf("("));
-        return new Recommendation() {
-            @Override
-            public double getPriority(@NotNull LookupElement lookupElement) {
-                if (lookupElement.getLookupString().equals(mostUsedMethodName)) {
+        return new SignatureRecommendation(mostUsedSuggestion);
+    }
+
+
+    private final static class SignatureRecommendation implements Recommendation {
+
+        private String suggestion;
+
+        private SignatureRecommendation(String suggestion) {
+            this.suggestion = suggestion;
+        }
+
+        @Override
+        public double getPriority(@NotNull LookupElement lookupElement) {
+            final String mostUsedMethodName = suggestion.substring(0, suggestion.indexOf("("));
+            if (lookupElement.getLookupString().equals(mostUsedMethodName)) {
+                PsiMethod method = (PsiMethod) lookupElement.getPsiElement();
+                if (method != null && suggestion.equals(PsiUtils.getSignatureString(method))) {
                     return 1.0;
                 }
-                return 0.0;
+                return 0.5;
             }
-        };
-
+            return 0.0;
+        }
     }
 }

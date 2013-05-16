@@ -11,6 +11,7 @@ import java.util.*;
 /**
  * @author Pavel Talanov
  * @author Goncharova Irina
+ * @author Osipov Stanislav
  */
 public final class PsiUtils {
     private PsiUtils() {
@@ -80,6 +81,11 @@ public final class PsiUtils {
         if (psiMethod == null) {
             return null;
         }
+        return getSignatureString(psiMethod);
+    }
+
+    @Nullable
+    public static String getSignatureString(@NotNull PsiMethod psiMethod) {
         PsiSubstitutor substitutor = createTypeSubstitutor(psiMethod);
         PsiType unsubstitutedReturnType = psiMethod.getReturnTypeNoResolve();
         if (unsubstitutedReturnType == null) {
