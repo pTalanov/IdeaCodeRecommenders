@@ -3,10 +3,7 @@ package ru.spbau.recommenders.plugin.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
@@ -51,6 +48,32 @@ public final class Suggestions {
         });
         return mostCalledMethod.getKey();
     }
+
+    @NotNull
+    public List<String> getMostUsedSuggestions() {
+        List<String> suggestions = new ArrayList<String>();
+        if (methodNameToUsageCount.isEmpty()) {
+            return suggestions;
+        }
+        for (Map.Entry<String, Integer> calledMethod : getMostUsedCalledMethods()) {
+            suggestions.add(calledMethod.getKey());
+        }
+        return suggestions;
+    }
+
+    @NotNull
+    private List<Map.Entry<String, Integer>> getMostUsedCalledMethods() {
+        int suggestionSize = methodNameToUsageCount.size() / 5 + 1;
+        ArrayList<Map.Entry<String, Integer>> calledMethods = new ArrayList<Map.Entry<String, Integer>>(methodNameToUsageCount.entrySet());
+        Collections.sort(calledMethods, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue() - o1.getValue();
+            }
+        });
+        return calledMethods.subList(0, suggestionSize);
+    }
+
 
     @Override
     public String toString() {
