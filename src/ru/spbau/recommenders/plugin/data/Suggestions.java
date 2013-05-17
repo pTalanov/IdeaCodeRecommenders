@@ -1,7 +1,8 @@
 package ru.spbau.recommenders.plugin.data;
 
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -35,36 +36,23 @@ public final class Suggestions {
         }
     }
 
-    @Nullable
-    public String getMostUsedSuggestion() {
-        if (methodNameToUsageCount.isEmpty()) {
-            return null;
-        }
-        Map.Entry<String, Integer> mostCalledMethod = Collections.max(methodNameToUsageCount.entrySet(), new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o1.getValue() - o2.getValue();
-            }
-        });
-        return mostCalledMethod.getKey();
-    }
-
     @NotNull
     public List<String> getMostUsedSuggestions() {
-        List<String> suggestions = new ArrayList<String>();
         if (methodNameToUsageCount.isEmpty()) {
-            return suggestions;
+            return Collections.emptyList();
         }
-        for (Map.Entry<String, Integer> calledMethod : getMostUsedCalledMethods()) {
-            suggestions.add(calledMethod.getKey());
-        }
-        return suggestions;
+        return ContainerUtil.map(getMostUsedCalledMethods(), new Function<Map.Entry<String, Integer>, String>() {
+            @Override
+            public String fun(Map.Entry<String, Integer> mostCalledMethod) {
+                return mostCalledMethod.getKey();
+            }
+        });
     }
 
     @NotNull
     private List<Map.Entry<String, Integer>> getMostUsedCalledMethods() {
         int suggestionSize = methodNameToUsageCount.size() / 5 + 1;
-        ArrayList<Map.Entry<String, Integer>> calledMethods = new ArrayList<Map.Entry<String, Integer>>(methodNameToUsageCount.entrySet());
+        List<Map.Entry<String, Integer>> calledMethods = new ArrayList<Map.Entry<String, Integer>>(methodNameToUsageCount.entrySet());
         Collections.sort(calledMethods, new Comparator<Map.Entry<String, Integer>>() {
             @Override
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
