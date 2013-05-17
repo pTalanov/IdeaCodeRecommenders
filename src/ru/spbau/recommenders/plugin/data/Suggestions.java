@@ -1,10 +1,10 @@
 package ru.spbau.recommenders.plugin.data;
 
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Pavel Talanov
@@ -37,29 +37,8 @@ public final class Suggestions {
     }
 
     @NotNull
-    public List<String> getMostUsedSuggestions() {
-        if (methodNameToUsageCount.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return ContainerUtil.map(getMostUsedCalledMethods(), new Function<Map.Entry<String, Integer>, String>() {
-            @Override
-            public String fun(Map.Entry<String, Integer> mostCalledMethod) {
-                return mostCalledMethod.getKey();
-            }
-        });
-    }
-
-    @NotNull
-    private List<Map.Entry<String, Integer>> getMostUsedCalledMethods() {
-        int suggestionSize = methodNameToUsageCount.size() / 5 + 1;
-        List<Map.Entry<String, Integer>> calledMethods = new ArrayList<Map.Entry<String, Integer>>(methodNameToUsageCount.entrySet());
-        Collections.sort(calledMethods, new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        });
-        return calledMethods.subList(0, suggestionSize);
+    public Map<String, Integer> getMostUsedSuggestions() {
+        return Collections.unmodifiableMap(methodNameToUsageCount);
     }
 
 

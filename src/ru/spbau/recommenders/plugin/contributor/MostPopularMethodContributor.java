@@ -43,27 +43,29 @@ public final class MostPopularMethodContributor extends CompletionContributor {
 
     @Nullable
     private LookupElement mark(@NotNull final LookupElement lookupElement, final double priority) {
-        if (priority < LIMIT) {
-            return lookupElement;
-        }
+
         LookupElementDecorator<LookupElement> markedLookupElement = LookupElementDecorator.withRenderer(lookupElement, new LookupElementRenderer<LookupElementDecorator<LookupElement>>() {
             @Override
             public void renderElement(LookupElementDecorator<LookupElement> element, LookupElementPresentation presentation) {
                 lookupElement.renderElement(presentation);
-                presentation.setItemTextForeground(Color.BLUE);
-                presentation.setItemTextBold(true);
-                presentation.appendTailText(TAB + asString(priority), true);
+                if (priority > LIMIT) {
+                    presentation.setItemTextForeground(Color.BLUE);
+                }
+                if (priority > 0.0) {
+                    presentation.setItemTextBold(true);
+                    presentation.setTypeText(asString(priority) + TAB + presentation.getTypeText());
+                }
             }
 
             private String asString(double priority) {
-                return ((int) priority * 100) + "%";
+                return ((int) (priority * 100)) + "%";
             }
         });
         return PrioritizedLookupElement.withPriority(markedLookupElement, priority);
     }
 
 
-    private final static String TAB = "         ";
-    private final static double LIMIT = 0.75;
+    private final static String TAB = "      ";
+    private final static double LIMIT = 0.5;
 
 }
