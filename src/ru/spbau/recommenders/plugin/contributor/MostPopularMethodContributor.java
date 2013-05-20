@@ -17,8 +17,13 @@ import java.awt.*;
  */
 public final class MostPopularMethodContributor extends CompletionContributor {
 
+    private static final String TAB = "  ";
+    private static final double MIN_PRIORITY_COLORED = 0.5;
+    private static final double MIN_PRIORITY_DISPLAYED = 0.05;
+
     public MostPopularMethodContributor() {
     }
+
 
     @Override
     public void fillCompletionVariants(CompletionParameters parameters, final CompletionResultSet result) {
@@ -48,10 +53,11 @@ public final class MostPopularMethodContributor extends CompletionContributor {
             @Override
             public void renderElement(LookupElementDecorator<LookupElement> element, LookupElementPresentation presentation) {
                 lookupElement.renderElement(presentation);
-                if (priority > LIMIT) {
+                if (priority > MIN_PRIORITY_COLORED) {
                     presentation.setItemTextForeground(Color.BLUE);
                 }
-                if (priority > 0.0) {
+
+                if (priority > MIN_PRIORITY_DISPLAYED) {
                     presentation.setItemTextBold(true);
                     presentation.setTypeText(asString(priority) + TAB + presentation.getTypeText());
                 }
@@ -63,9 +69,5 @@ public final class MostPopularMethodContributor extends CompletionContributor {
         });
         return PrioritizedLookupElement.withPriority(markedLookupElement, priority);
     }
-
-
-    private final static String TAB = "      ";
-    private final static double LIMIT = 0.5;
 
 }
