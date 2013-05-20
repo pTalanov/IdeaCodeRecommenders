@@ -10,8 +10,6 @@ import ru.spbau.recommenders.plugin.MethodStatisticsProjectComponent;
 import ru.spbau.recommenders.plugin.data.Suggestions;
 import ru.spbau.recommenders.plugin.utils.PsiUtils;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -63,16 +61,13 @@ public final class RecommendationProvider {
 
         @NotNull
         private Map<String, Integer> suggestions;
-        private Map.Entry<String, Integer> maxPriorityElement;
+        private double normalizationDivisor;
 
         private SignatureRecommendation(@NotNull Map<String, Integer> suggestions) {
             this.suggestions = suggestions;
-            this.maxPriorityElement = Collections.max(suggestions.entrySet(), new Comparator<Map.Entry<String, Integer>>() {
-                @Override
-                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                    return o1.getValue() - o2.getValue();
-                }
-            });
+            for (Integer count : suggestions.values()) {
+                normalizationDivisor += count;
+            }
         }
 
         @Override
@@ -89,8 +84,8 @@ public final class RecommendationProvider {
                 return 0.0;
             }
             Integer counter = suggestions.get(signatureString);
-            if (counter != null && maxPriorityElement.getValue() != 0) {
-                return (double) counter / (double) maxPriorityElement.getValue();
+            if (counter != null) {
+                return (double) counter / normalizationDivisor;
             }
             return 0.0;
         }
